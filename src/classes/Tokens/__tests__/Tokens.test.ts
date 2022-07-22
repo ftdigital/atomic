@@ -23,12 +23,12 @@ it("Should return all vars (without media-type names)", () => {
 
 it("Should be able to create css", () => {
   const tokens = new Tokens(
-    { mobile: "mobile-query", desktop: "desktop-query" },
+    { mobile: "mobile-query" },
     {
-      color: { primary: "red", secondary: "blue" },
-      fontSize: { large: { mobile: "red", desktop: "blue" } },
+      color: "red",
     }
   );
+  console.log(tokens.css());
 
-  expect(tokens.css()).toEqual("");
+  expect(tokens.css()).toContain(":root {\n--color: red;\n}");
 });

@@ -2,11 +2,27 @@ import { Token } from "@classes/Token";
 import { batchTokens } from "../batchTokens";
 
 function renderMediaTypePart(children: string[]) {
+  if (children.length === 0) return [];
+
   const start = ":root {";
   const middle = children;
   const end = "}";
 
   return [start, ...middle, end];
+}
+
+function renderMediaTypeTokens(
+  mediaQueries: Record<string, string>,
+  mediaType: string,
+  tokens: Token[]
+) {
+  if (tokens.length === 0) return [];
+
+  const start = `@media ${mediaQueries[mediaType]} {`;
+  const middle = tokens.map(renderToken);
+  const end = "};";
+
+  return renderMediaTypePart([start, ...middle, end]);
 }
 
 function renderToken(token: Token) {
@@ -27,18 +43,10 @@ export function createCss<MediaType extends string>(
   );
 
   const cssArr = [
-    ...[misc.length > 0 ? renderMediaTypePart(misc.map(renderToken)) : []],
-    ...mediaTypeTokens.map(([mediaType, tokens]) => {
-      if (tokens.length === 0) {
-        return [];
-      }
-
-      const start = `@media ${mediaQueries[mediaType]} {`;
-      const middle = tokens.map(renderToken);
-      const end = "};";
-
-      return renderMediaTypePart([start, ...middle, end]);
-    }),
+    renderMediaTypePart(misc.map(renderToken)),
+    ...mediaTypeTokens.map(([mediaType, tokens]) =>
+      renderMediaTypeTokens(mediaQueries, mediaType, tokens)
+    ),
   ];
 
   return toCssString(cssArr);
