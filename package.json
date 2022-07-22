@@ -1,0 +1,53 @@
+{
+  "name": "@ftdigital/tokens",
+  "version": "1.0.1",
+  "description": "",
+  "author": "FT Digital",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ftdigital/tokens.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ftdigital/tokens/issues"
+  },
+  "license": "MIT",
+  "main": "./dist/tokens.umd.js",
+  "module": "./dist/tokens.es.js",
+  "typings": "./dist/index.d.ts",
+  "sideEffects": false,
+  "private": false,
+  "files": [
+    "package.json",
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/tokens.es.js",
+      "require": "./dist/tokens.umd.js"
+    }
+  },
+  "scripts": {
+    "build": "vite build",
+    "test": "jest",
+    "test:dev": "yarn test --watch"
+  },
+  "size-limit": [
+    {
+      "path": "dist/tokens.es.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/tokens.umd.js",
+      "limit": "10 KB"
+    }
+  ],
+  "devDependencies": {
+    "typescript": "^4.7.4",
+    "vite": "^2.9.12",
+    "vite-plugin-dts": "^1.2.0",
+    "vite-tsconfig-paths": "^3.5.0",
+    "jest": "^28.1.3",
+    "ts-jest": "^28.0.7",
+    "@types/jest": "^28.1.6"
+  }
+}
