@@ -1,18 +1,18 @@
 {
-  "name": "@ftdigital/tokens",
-  "version": "1.0.1",
+  "name": "@ftdigital/design-tokens",
+  "version": "0.0.1",
   "description": "",
   "author": "FT Digital",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ftdigital/tokens.git"
+    "url": "git+https://github.com/ftdigital/design-tokens.git"
   },
   "bugs": {
-    "url": "https://github.com/ftdigital/tokens/issues"
+    "url": "https://github.com/ftdigital/design-tokens/issues"
   },
   "license": "MIT",
-  "main": "./dist/tokens.umd.js",
-  "module": "./dist/tokens.es.js",
+  "main": "./dist/design-tokens.umd.js",
+  "module": "./dist/design-tokens.es.js",
   "typings": "./dist/index.d.ts",
   "sideEffects": false,
   "private": false,
@@ -22,8 +22,8 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/tokens.es.js",
-      "require": "./dist/tokens.umd.js"
+      "import": "./dist/design-tokens.es.js",
+      "require": "./dist/design-tokens.umd.js"
     }
   },
   "scripts": {
@@ -33,11 +33,11 @@
   },
   "size-limit": [
     {
-      "path": "dist/tokens.es.js",
+      "path": "dist/design-tokens.es.js",
       "limit": "10 KB"
     },
     {
-      "path": "dist/tokens.umd.js",
+      "path": "dist/design-tokens.umd.js",
       "limit": "10 KB"
     }
   ],
