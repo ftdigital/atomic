@@ -12,11 +12,14 @@ export function batchTokens<MediaType extends string>(
 
   tokens.forEach((token) => {
     if (token.mediaType) {
-      result[token.mediaType].push();
+      result[token.mediaType].push(token);
     } else {
       misc.push(token);
     }
   });
 
-  return { misc, ...result };
+  return [
+    misc,
+    mediaTypes.map((mediaType) => [mediaType, result[mediaType]] as const),
+  ] as const;
 }

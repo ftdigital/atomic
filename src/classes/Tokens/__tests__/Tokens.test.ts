@@ -20,3 +20,15 @@ it("Should return all vars (without media-type names)", () => {
 
   expect(tokens.vars).toEqual({ fontSize: { large: "var(--fontSize-large)" } });
 });
+
+it("Should be able to create css", () => {
+  const tokens = new Tokens(
+    { mobile: "mobile-query", desktop: "desktop-query" },
+    {
+      color: { primary: "red", secondary: "blue" },
+      fontSize: { large: { mobile: "red", desktop: "blue" } },
+    }
+  );
+
+  expect(tokens.css()).toEqual("");
+});

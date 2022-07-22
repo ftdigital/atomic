@@ -1,5 +1,5 @@
 import { TokensConfig, TokenVars } from "@types";
-import { tokensConfigToTokens, tokensToVars, batchTokens } from "@utils";
+import { tokensConfigToTokens, tokensToVars, createCss } from "@utils";
 
 export class Tokens<
   MediaType extends string,
@@ -17,16 +17,6 @@ export class Tokens<
     return Object.keys(this.mediaQueries) as MediaType[];
   }
 
-  get usedMediaTypes() {
-    const mediaTypesSet = new Set<MediaType>();
-
-    this.tokens.forEach(
-      ({ mediaType }) => mediaType && mediaTypesSet.add(mediaType)
-    );
-
-    return Array.from(mediaTypesSet);
-  }
-
   get tokens() {
     return tokensConfigToTokens(this.config, this.mediaTypes);
   }
@@ -35,8 +25,8 @@ export class Tokens<
     return tokensToVars<MediaType, TConfig>(this.tokens);
   }
 
-  get batchedTokens() {
-    return batchTokens(this.tokens, this.usedMediaTypes);
+  css() {
+    return createCss(this.tokens, this.mediaQueries);
   }
 
   private mergeConfig<T extends TokensConfig>(tokens: T) {
