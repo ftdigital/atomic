@@ -8,8 +8,17 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),
       name: "tokens",
+      formats: ["es"],
       fileName: (format) => `tokens.${format}.js`,
     },
   },
-  plugins: [dts(), tsconfigPaths()],
+  resolve: {
+    alias: {
+      "@classes": path.resolve(__dirname, "./src/classes"),
+      "@helpers": path.resolve(__dirname, "./src/helpers"),
+      "@utils": path.resolve(__dirname, "./src/utils"),
+      "@types": path.resolve(__dirname, "./src/types"),
+    },
+  },
+  plugins: [tsconfigPaths(), dts()],
 });

@@ -23,6 +23,7 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "baseUrl": "./src",
+    "noEmit": true,
     "paths": {
       "@classes/*": ["./classes/*"],
       "@helpers/*": ["./helpers/*"],
