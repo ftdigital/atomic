@@ -20,7 +20,7 @@ function renderMediaTypeTokens(
 
   const start = `@media ${mediaQueries[mediaType]} {`;
   const middle = tokens.map(renderToken);
-  const end = "};";
+  const end = "}";
 
   return renderMediaTypePart([start, ...middle, end]);
 }

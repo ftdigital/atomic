@@ -10,11 +10,13 @@ export function batchTokens<MediaType extends string>(
     mediaTypes.map((mediaType) => [mediaType, [] as Token<MediaType>[]])
   ) as { [Type in MediaType]: Token<MediaType>[] };
 
+  const [smallestMediaType] = mediaTypes;
+
   tokens.forEach((token) => {
-    if (token.mediaType) {
-      result[token.mediaType].push(token);
-    } else {
+    if (!token.mediaType || token.mediaType === smallestMediaType) {
       misc.push(token);
+    } else {
+      result[token.mediaType].push(token);
     }
   });
 

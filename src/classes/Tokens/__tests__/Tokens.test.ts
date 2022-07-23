@@ -12,18 +12,46 @@ it("Should return all mediaTypes", () => {
 
 it("Should return all vars (without media-type names)", () => {
   const tokens = new Tokens(
-    { mobile: "mobile-query", desktop: "desktop-query" },
     {
-      fontSize: { large: { mobile: "red", desktop: "blue" } },
+      mobile: "mobile-query",
+      tablet: "tablet-query",
+      desktop: "desktop-query",
+    },
+    {
+      fontSize: {
+        content: {
+          small: { mobile: "11px", tablet: "12px" },
+          medium: { mobile: "11px", tablet: "12px" },
+          large: { mobile: "11px", tablet: "12px" },
+        },
+        heading: {
+          small: { mobile: "11px", tablet: "12px" },
+          medium: { mobile: "11px", tablet: "12px" },
+          large: { mobile: "11px", tablet: "12px" },
+        },
+      },
     }
   );
 
-  expect(tokens.vars).toEqual({ fontSize: { large: "var(--fontSize-large)" } });
+  expect(tokens.vars).toEqual({
+    fontSize: {
+      content: {
+        small: "var(--fontSize-content-small)",
+        medium: "var(--fontSize-content-medium)",
+        large: "var(--fontSize-content-large)",
+      },
+      heading: {
+        small: "var(--fontSize-heading-small)",
+        medium: "var(--fontSize-heading-medium)",
+        large: "var(--fontSize-heading-large)",
+      },
+    },
+  });
 });
 
 it("Should be able to create css", () => {
   const tokens = new Tokens(
-    { mobile: "mobile-query" },
+    { mobile: "mobile-query", tablet: "tablet-query" },
     {
       color: "red",
     }
