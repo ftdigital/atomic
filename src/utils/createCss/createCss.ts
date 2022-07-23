@@ -19,10 +19,10 @@ function renderMediaTypeTokens(
   if (tokens.length === 0) return [];
 
   const start = `@media ${mediaQueries[mediaType]} {`;
-  const middle = tokens.map(renderToken);
+  const middle = renderMediaTypePart(tokens.map(renderToken));
   const end = "}";
 
-  return renderMediaTypePart([start, ...middle, end]);
+  return [start, ...middle, end];
 }
 
 function renderToken(token: Token) {

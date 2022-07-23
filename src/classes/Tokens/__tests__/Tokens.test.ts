@@ -56,7 +56,6 @@ it("Should be able to create css", () => {
       color: "red",
     }
   );
-  console.log(tokens.css());
 
   expect(tokens.css()).toContain(":root {\n--color: red;\n}");
 });
