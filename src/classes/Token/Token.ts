@@ -1,15 +1,25 @@
+import { TokenValue } from "@types";
+
 export class Token<MediaType extends string = string> {
   path: string[];
-  value: string | number;
-  mediaType: MediaType | null;
+  value: TokenValue;
+  mediaType?: MediaType;
 
-  constructor(path: string[], value: string | number, mediaType?: MediaType) {
+  constructor(path: string[], value: TokenValue, mediaType?: MediaType) {
     this.path = path;
     this.value = value;
-    this.mediaType = mediaType ?? null;
+    this.mediaType = mediaType;
+  }
+
+  get isResponsive() {
+    return Boolean(this.mediaType);
+  }
+
+  get varName() {
+    return `--${this.path.join("-")}`;
   }
 
   get var() {
-    return `--${this.path.join("-")}`;
+    return `var(${this.varName})`;
   }
 }

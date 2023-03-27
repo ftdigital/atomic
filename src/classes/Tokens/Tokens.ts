@@ -1,48 +1,61 @@
-import { TokensConfig, TokenVars } from "@types";
-import { tokensConfigToTokens, tokensToVars, createCss } from "@utils";
+import { TokenKey, TokensConfig, TokensOptions } from "@types";
+import { tokensConfigToTokensMap, createCss } from "@utils";
 
 export class Tokens<
-  MediaType extends string,
-  TConfig extends TokensConfig<MediaType>
+  MediaType extends string = string,
+  TConfig extends TokensConfig<MediaType> = TokensConfig
 > {
-  mediaQueries: Record<MediaType, string>;
-  config: TConfig;
+  public options: TokensOptions<MediaType>;
+  private config: TConfig;
 
-  constructor(mediaQueries: Record<MediaType, string>, config: TConfig) {
-    this.mediaQueries = mediaQueries;
+  constructor(options: TokensOptions<MediaType>, config: TConfig) {
+    this.options = options;
     this.config = config;
   }
 
-  get mediaTypes() {
-    return Object.keys(this.mediaQueries) as MediaType[];
+  private get mediaTypes() {
+    const { mediaQueries } = this.options;
+    return mediaQueries ? (Object.keys(mediaQueries) as MediaType[]) : [];
   }
 
-  get tokens() {
-    return tokensConfigToTokens(this.config, this.mediaTypes);
+  private get map() {
+    return tokensConfigToTokensMap(this.config, this.mediaTypes);
   }
 
-  get vars() {
-    return tokensToVars<MediaType, TConfig>(this.tokens);
+  public get tokens() {
+    return Array.from(this.map.values());
   }
 
-  css() {
-    return createCss(this.tokens, this.mediaQueries);
-  }
-
-  private mergeConfig<T extends TokensConfig>(tokens: T) {
-    return new Tokens(this.mediaQueries, {
+  private merge<T extends TokensConfig>(tokens: T) {
+    return new Tokens(this.options, {
       ...this.config,
       ...tokens,
     });
   }
 
-  add<K extends string, T extends TokensConfig<MediaType>>(
-    key: K,
-    config: T | ((vars: TokenVars<TConfig, MediaType>) => T)
+  private find(path: TokenKey<TConfig>) {
+    return this.map.get(path);
+  }
+
+  public generateCss() {
+    return createCss(this);
+  }
+
+  public extend<T extends TokensConfig<MediaType>>(
+    config: T | ((tools: Pick<Tokens<MediaType, TConfig>, "css">) => T)
   ) {
     const resolvedConfig =
-      typeof config === "function" ? config(this.vars) : config;
-    const addedTokens = { [key]: resolvedConfig } as Record<K, T>;
-    return this.mergeConfig(addedTokens);
+      typeof config === "function"
+        ? config({ css: this.css.bind(this) })
+        : config;
+    return this.merge(resolvedConfig);
+  }
+
+  public css(path: TokenKey<TConfig>) {
+    return this.find(path)?.var;
+  }
+
+  public value(path: TokenKey<TConfig>) {
+    return this.find(path)?.value;
   }
 }

@@ -1,61 +1,30 @@
 import { Tokens } from "../Tokens";
 
-it("Should return the correct config value", () => {
-  const tokens = new Tokens({ mobile: "20px" }, { color: "red" });
-  expect(tokens.config.color).toStrictEqual("red");
-});
-
-it("Should return all mediaTypes", () => {
-  const tokens = new Tokens({ mobile: "20px" }, { color: "red" });
-  expect(tokens.mediaTypes).toStrictEqual(["mobile"]);
-});
-
-it("Should return all vars (without media-type names)", () => {
-  const tokens = new Tokens(
-    {
-      mobile: "mobile-query",
-      tablet: "tablet-query",
-      desktop: "desktop-query",
-    },
-    {
-      fontSize: {
-        content: {
-          small: { mobile: "11px", tablet: "12px" },
-          medium: { mobile: "11px", tablet: "12px" },
-          large: { mobile: "11px", tablet: "12px" },
-        },
-        heading: {
-          small: { mobile: "11px", tablet: "12px" },
-          medium: { mobile: "11px", tablet: "12px" },
-          large: { mobile: "11px", tablet: "12px" },
-        },
-      },
-    }
-  );
-
-  expect(tokens.vars).toEqual({
+const tokens = new Tokens(
+  { mediaQueries: { mobile: "20px" } },
+  {
+    color: "red",
     fontSize: {
-      content: {
-        small: "var(--fontSize-content-small)",
-        medium: "var(--fontSize-content-medium)",
-        large: "var(--fontSize-content-large)",
-      },
-      heading: {
-        small: "var(--fontSize-heading-small)",
-        medium: "var(--fontSize-heading-medium)",
-        large: "var(--fontSize-heading-large)",
-      },
+      small: { mobile: 10, tablet: 20 },
+      normal: { mobile: 10, tablet: 20 },
+      large: { mobile: 10, tablet: 20 },
     },
-  });
+    fontFamily: "arial",
+  }
+).extend(({ css }) => {
+  return {
+    test: css("fontSize.large.mobile"),
+  };
 });
 
-it("Should be able to create css", () => {
-  const tokens = new Tokens(
-    { mobile: "mobile-query", tablet: "tablet-query" },
-    {
-      color: "red",
-    }
-  );
+it("Should return the correct config value", () => {
+  expect(tokens.value("color")).toStrictEqual("red");
+});
 
-  expect(tokens.css()).toContain(":root {\n--color: red;\n}");
+it("Should return the correct config value with responsive value", () => {
+  expect(tokens.value("fontSize.small.mobile")).toStrictEqual(10);
+});
+
+it("Should return the correct css variable", () => {
+  expect(tokens.css("color")).toStrictEqual("var(--color)");
 });
