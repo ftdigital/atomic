@@ -37,7 +37,7 @@ export class Tokens<
     return this.map.get(path);
   }
 
-  public generateCss() {
+  public generateCss(): string {
     return createCss(this);
   }
 
