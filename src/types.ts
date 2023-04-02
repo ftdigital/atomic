@@ -1,34 +1,47 @@
-export type TokenValue = string | number;
+import type { DesignToken } from "@classes/DesignToken";
+import type { DesignTokenConfig } from "@classes/DesignTokenConfig";
+import type { DesignTokensConfig } from "@classes/DesignTokens";
 
-export type TokensConfig<MediaType extends string = string> = {
-  [key: string]:
-    | TokensConfig<MediaType>
-    | TokenValue
-    | undefined
-    | Record<MediaType, TokenValue>;
-};
+export type DesignTokenValue = string | number;
 
-export interface TokensOptions<MediaType extends string> {
-  mediaQueries: Record<MediaType, string>;
-}
+export type DesignTokenValueResponsive = readonly [
+  DesignTokenValue,
+  Record<string, DesignTokenValue>
+];
 
-type PathsToStringProps<T> = T extends TokenValue
-  ? []
+type TypeFromPath<
+  T extends Record<string, unknown>,
+  Path extends string // Or, if you prefer, NestedPaths<T>
+> = {
+  [K in Path]: K extends keyof T
+    ? T[K]
+    : K extends `${infer P}.${infer S}`
+    ? T[P] extends Record<string, unknown>
+      ? TypeFromPath<T[P], S>
+      : never
+    : never;
+}[Path];
+
+type Dot<T extends string, U extends string> = "" extends U ? T : `${T}.${U}`;
+
+export type DesignTokenPath<T> = T extends DesignTokenConfig<any>
+  ? ""
   : {
-      [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>];
+      [K in Extract<keyof T, string>]: Dot<K, DesignTokenPath<T[K]>>;
     }[Extract<keyof T, string>];
 
-type Join<T, D extends string> = T extends []
-  ? never
-  : T extends [infer F]
-  ? F
-  : T extends [infer F, ...infer R]
-  ? F extends TokenValue
-    ? `${F}${D}${Join<Extract<R, string[]>, D>}`
-    : never
-  : TokenValue;
+export type DesignTokenConfigFromPath<
+  Config extends DesignTokensConfig,
+  Path extends string,
+  Result = TypeFromPath<Config, Path>
+> = Result extends DesignTokenConfig<infer Values>
+  ? DesignTokenConfig<Values>
+  : never;
 
-export type TokenKey<T extends Record<string, unknown>> = Join<
-  PathsToStringProps<T>,
-  "."
->;
+export type DesignTokenFromPath<
+  Config extends DesignTokensConfig,
+  Path extends string,
+  Result = TypeFromPath<Config, Path>
+> = Result extends DesignTokenConfig<infer Values>
+  ? DesignToken<DesignTokenConfig<Values>>
+  : never;

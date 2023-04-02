@@ -1,2 +1,1 @@
-export { createTokens } from "./helpers/createTokens";
-export type { Tokens } from "./classes/Tokens";
+export { DesignTokens } from "./classes/DesignTokens";
