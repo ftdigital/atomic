@@ -1,9 +1,5 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
-    "target": "ES2021",
-    "lib": ["ESNext", "ES2021", "DOM", "DOM.Iterable"],
-    "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": false,
     "declaration": true,
@@ -21,16 +17,6 @@
     "noEmitOnError": true,
     "useDefineForClassFields": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "baseUrl": "./src",
-    "noEmit": true,
-    "paths": {
-      "@classes/*": ["./classes/*"],
-      "@helpers/*": ["./helpers/*"],
-      "@utils": ["./utils"],
-      "@types": ["./types"]
-    }
-  },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+    "skipLibCheck": true
+  }
 }

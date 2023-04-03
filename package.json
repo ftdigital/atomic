@@ -1,53 +1,42 @@
 {
-  "name": "@ftdigital/design-tokens",
-  "version": "0.0.6",
+  "name": "@design-tokens/root",
+  "version": "0.0.1",
   "description": "",
-  "author": "FT Digital",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ftdigital/design-tokens.git"
   },
+  "author": "FT Digital",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/ftdigital/design-tokens/issues"
   },
-  "license": "MIT",
-  "main": "./dist/design-tokens.umd.js",
-  "module": "./dist/design-tokens.es.js",
-  "typings": "./dist/index.d.ts",
-  "sideEffects": false,
-  "private": false,
-  "files": [
-    "package.json",
-    "dist"
-  ],
-  "exports": {
-    ".": {
-      "import": "./dist/design-tokens.es.js",
-      "require": "./dist/design-tokens.umd.js"
+  "homepage": "https://github.com/ftdigital/design-tokens#readme",
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": false,
+    "tabWidth": 2,
+    "trailingComma": "none",
+    "arrowParens": "avoid"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "eslint --fix"
     }
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "build": "vite build",
-    "test": "jest",
-    "test:dev": "yarn test --watch"
+    "build:design-tokens": "yarn workspace @design-tokens/design-tokens build",
+    "build:plugin-webpack": "yarn workspace @design-tokens/plugin-webpack build",
+    "build": "yarn build:design-tokens && yarn build:plugin-webpack"
   },
-  "size-limit": [
-    {
-      "path": "dist/design-tokens.es.js",
-      "limit": "10 KB"
-    },
-    {
-      "path": "dist/design-tokens.umd.js",
-      "limit": "10 KB"
-    }
-  ],
   "devDependencies": {
-    "typescript": "^4.7.4",
-    "vite": "^2.9.12",
-    "vite-plugin-dts": "^1.2.0",
-    "vite-tsconfig-paths": "^3.5.0",
-    "jest": "^28.1.3",
-    "ts-jest": "^28.0.7",
-    "@types/jest": "^28.1.6"
+    "husky": "^8.0.3",
+    "typescript": "^5.0.3",
+    "prettier": "^2.8.7"
   }
 }
