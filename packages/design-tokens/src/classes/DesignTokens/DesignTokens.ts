@@ -1,20 +1,16 @@
 import { DesignTokensConfig, DesignTokensOptions } from "./types";
 import { createDesignTokens, generateCss } from "@utils";
-import { DesignTokenFromPath, DesignTokenPath } from "@types";
-import { DesignTokensTools } from "./DesignTokensTools";
+import { DesignTokenFromPath, DesignTokenPath, DesignTokenValue } from "@types";
+import { DesignTokenConfig } from "@classes/DesignTokenConfig";
 
 export class DesignTokens<
   MediaType extends string = string,
   Config extends DesignTokensConfig = DesignTokensConfig
 > {
-  private tools: DesignTokensTools<MediaType, Config>;
-
   private constructor(
     public options: DesignTokensOptions<MediaType>,
     protected config: Config
-  ) {
-    this.tools = new DesignTokensTools<MediaType, Config>(this);
-  }
+  ) {}
 
   public static create<MediaType extends string = string>(
     options: DesignTokensOptions<MediaType>
@@ -46,6 +42,46 @@ export class DesignTokens<
     });
   }
 
+  get tools() {
+    const get = this.get.bind(this);
+
+    function create<Value extends DesignTokenValue>(
+      defaultValue: Value,
+      responsiveValues?: never
+    ): DesignTokenConfig<{ default: Value }>;
+    function create<
+      Value extends DesignTokenValue,
+      ResponsiveValues extends Partial<Record<MediaType, DesignTokenValue>>
+    >(
+      defaultValue: Value,
+      responsiveValues: ResponsiveValues
+    ): DesignTokenConfig<{ default: Value } & ResponsiveValues>;
+    function create<
+      Value extends DesignTokenValue,
+      ResponsiveValues extends
+        | Partial<Record<MediaType, DesignTokenValue>>
+        | undefined
+    >(
+      defaultValue: Value,
+      responsiveValues: ResponsiveValues
+    ): DesignTokenConfig<{ default: Value } & ResponsiveValues> {
+      return new DesignTokenConfig({
+        default: defaultValue,
+        ...responsiveValues
+      });
+    }
+
+    function use<Path extends DesignTokenPath<Config>>(
+      path: Path
+    ): DesignTokenFromPath<Config, Path>["var"] {
+      return get(path)["var"];
+    }
+
+    return {
+      create,
+      use: use.bind(this)
+    };
+  }
   public get<Path extends DesignTokenPath<Config>>(
     path: Path
   ): DesignTokenFromPath<Config, Path> {
@@ -57,7 +93,7 @@ export class DesignTokens<
   }
 
   public extend<T extends DesignTokensConfig>(
-    configCallback: (tools: DesignTokensTools<MediaType>) => T
+    configCallback: (tools: DesignTokens<MediaType, Config>["tools"]) => T
   ) {
     const resolvedConfig = configCallback(this.tools);
 
