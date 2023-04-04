@@ -4,11 +4,6 @@ import type { DesignTokensConfig } from "@classes/DesignTokens";
 
 export type DesignTokenValue = string | number;
 
-export type DesignTokenValueResponsive = readonly [
-  DesignTokenValue,
-  Record<string, DesignTokenValue>
-];
-
 type TypeFromPath<
   T extends Record<string, unknown>,
   Path extends string // Or, if you prefer, NestedPaths<T>
@@ -32,16 +27,14 @@ export type DesignTokenPath<T> = T extends DesignTokenConfig<any>
 
 export type DesignTokenConfigFromPath<
   Config extends DesignTokensConfig,
-  Path extends string,
-  Result = TypeFromPath<Config, Path>
-> = Result extends DesignTokenConfig<infer Values>
+  Path extends string
+> = TypeFromPath<Config, Path> extends DesignTokenConfig<infer Values>
   ? DesignTokenConfig<Values>
   : never;
 
 export type DesignTokenFromPath<
   Config extends DesignTokensConfig,
-  Path extends string,
-  Result = TypeFromPath<Config, Path>
-> = Result extends DesignTokenConfig<infer Values>
+  Path extends string
+> = TypeFromPath<Config, Path> extends DesignTokenConfig<infer Values>
   ? DesignToken<DesignTokenConfig<Values>>
   : never;

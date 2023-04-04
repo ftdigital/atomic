@@ -2,7 +2,7 @@ import type { DesignTokenConfig } from "@classes/DesignTokenConfig";
 import type {
   DesignTokenFromPath,
   DesignTokenPath,
-  DesignTokenValue,
+  DesignTokenValue
 } from "@types";
 
 export interface DesignTokensOptions<MediaType extends string> {
@@ -15,7 +15,9 @@ export interface ExtendTools<
 > {
   create: <
     Value extends DesignTokenValue,
-    ResponsiveValues extends Partial<Record<MediaType, DesignTokenValue>>
+    ResponsiveValues extends
+      | Partial<Record<MediaType, DesignTokenValue>>
+      | undefined = undefined
   >(
     defaultValue: Value,
     responsiveValues?: ResponsiveValues
@@ -26,5 +28,5 @@ export interface ExtendTools<
 }
 
 export type DesignTokensConfig = {
-  [key: string]: DesignTokensConfig | DesignTokenConfig<any>;
+  [key: string]: DesignTokensConfig | DesignTokenConfig;
 };

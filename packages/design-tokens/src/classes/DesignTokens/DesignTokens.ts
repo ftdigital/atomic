@@ -1,18 +1,19 @@
-import { DesignTokensConfig, DesignTokensOptions, ExtendTools } from "./types";
-import { createDesignTokens } from "@utils";
+import { DesignTokensConfig, DesignTokensOptions } from "./types";
+import { createDesignTokens, generateCss } from "@utils";
 import { DesignTokenFromPath, DesignTokenPath } from "@types";
-import { DesignTokenConfig } from "@classes/DesignTokenConfig";
+import { DesignTokensTools } from "./DesignTokensTools";
 
 export class DesignTokens<
   MediaType extends string = string,
   Config extends DesignTokensConfig = DesignTokensConfig
 > {
-  public options: DesignTokensOptions<MediaType>;
-  private config: Config;
+  private tools: DesignTokensTools<MediaType, Config>;
 
-  private constructor(options: DesignTokensOptions<MediaType>, config: Config) {
-    this.options = options;
-    this.config = config;
+  private constructor(
+    public options: DesignTokensOptions<MediaType>,
+    protected config: Config
+  ) {
+    this.tools = new DesignTokensTools<MediaType, Config>(this);
   }
 
   public static create<MediaType extends string = string>(
@@ -52,25 +53,13 @@ export class DesignTokens<
   }
 
   public generateCss(): string {
-    return this.generateCss(this);
+    return generateCss(this);
   }
 
   public extend<T extends DesignTokensConfig>(
-    configCallback: (tools: ExtendTools<MediaType, Config>) => T
+    configCallback: (tools: DesignTokensTools<MediaType>) => T
   ) {
-    const get = this.get.bind(this);
-
-    const extendTools = {
-      create: function create(defaultValue, responsiveValues) {
-        return new DesignTokenConfig({
-          default: defaultValue,
-          ...responsiveValues
-        });
-      },
-      use: path => get(path).var
-    } as ExtendTools<MediaType, Config>;
-
-    const resolvedConfig = configCallback(extendTools);
+    const resolvedConfig = configCallback(this.tools);
 
     return this.merge(resolvedConfig);
   }

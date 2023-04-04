@@ -1,7 +1,7 @@
 import { DesignTokenConfig } from "@classes/DesignTokenConfig";
 import {
   InferDesignTokenConfigMediaType,
-  InferDesignTokenConfigValue,
+  InferDesignTokenConfigValue
 } from "./types";
 
 export class DesignToken<Config extends DesignTokenConfig<any>> {
@@ -13,11 +13,13 @@ export class DesignToken<Config extends DesignTokenConfig<any>> {
     this.config = config;
   }
 
-  public value<
-    MediaType extends
-      | InferDesignTokenConfigMediaType<Config>
-      | undefined = undefined
-  >(mediaType?: MediaType): InferDesignTokenConfigValue<Config, MediaType> {
+  value(): InferDesignTokenConfigValue<Config>;
+  value<MediaType extends InferDesignTokenConfigMediaType<Config>>(
+    mediaType: MediaType
+  ): InferDesignTokenConfigValue<Config, MediaType>;
+  value<MediaType extends string>(
+    mediaType?: MediaType
+  ): InferDesignTokenConfigValue<Config, MediaType> {
     return this.config.values[mediaType ?? "default"];
   }
 

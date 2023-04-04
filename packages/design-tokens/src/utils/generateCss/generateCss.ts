@@ -1,4 +1,4 @@
-import type { DesignTokens } from "@classes/DesignTokens";
+import type { DesignTokens, DesignTokensConfig } from "@classes/DesignTokens";
 
 function rule(content: string) {
   return `${content}\n`;
@@ -16,11 +16,10 @@ function mediaQueryCss(cssVars: string[], mediaQuery?: string) {
     : content;
 }
 
-export function generateCss({
-  mediaTypes,
-  tokens,
-  options
-}: DesignTokens<any, any>) {
+export function generateCss<
+  MediaType extends string,
+  Config extends DesignTokensConfig
+>({ mediaTypes, tokens, options }: DesignTokens<MediaType, Config>) {
   const cssVars = Object.fromEntries(
     ["default", ...mediaTypes].map(mediaType => [mediaType, []])
   ) as Record<string, string[]>;
@@ -30,7 +29,7 @@ export function generateCss({
       cssVars[mediaType]?.push(
         cssVarRule(
           token.key,
-
+          // @ts-ignore
           token.value(mediaType === "default" ? undefined : mediaType)
         )
       );
@@ -41,7 +40,9 @@ export function generateCss({
     .filter(([_, cssVarRules]) => cssVarRules.length > 0)
     .map(([mediaType, cssVarRules]) => {
       const mediaQuery =
-        mediaType !== "default" ? options.mediaQueries[mediaType] : undefined;
+        mediaType !== "default"
+          ? options.mediaQueries[mediaType as MediaType]
+          : undefined;
 
       return mediaQueryCss(cssVarRules, mediaQuery);
     })
