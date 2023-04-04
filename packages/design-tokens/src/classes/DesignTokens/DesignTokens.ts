@@ -31,9 +31,9 @@ export class DesignTokens<
 
   get tokensMap() {
     return new Map(
-      this.tokens.map((token) => [
+      this.tokens.map(token => [
         token.dottedPath as DesignTokenPath<Config>,
-        token,
+        token
       ])
     );
   }
@@ -41,7 +41,7 @@ export class DesignTokens<
   private merge<T extends DesignTokensConfig>(tokens: T) {
     return new DesignTokens(this.options, {
       ...this.config,
-      ...tokens,
+      ...tokens
     });
   }
 
@@ -49,6 +49,10 @@ export class DesignTokens<
     path: Path
   ): DesignTokenFromPath<Config, Path> {
     return this.tokensMap.get(path) as DesignTokenFromPath<Config, Path>;
+  }
+
+  public generateCss(): string {
+    return this.generateCss(this);
   }
 
   public extend<T extends DesignTokensConfig>(
@@ -60,10 +64,10 @@ export class DesignTokens<
       create: function create(defaultValue, responsiveValues) {
         return new DesignTokenConfig({
           default: defaultValue,
-          ...responsiveValues,
+          ...responsiveValues
         });
       },
-      use: (path) => get(path).var,
+      use: path => get(path).var
     } as ExtendTools<MediaType, Config>;
 
     const resolvedConfig = configCallback(extendTools);
