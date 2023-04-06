@@ -22,8 +22,7 @@ it('converts "*.mp3" import into an audio player', async () => {
   // Configure a webpack compiler.
   const compiler = webpack({
     mode: "development",
-    context: path.resolve(__dirname, "../__mocks__"),
-    entry: path.resolve(__dirname, "../__mocks__/src/index.ts"),
+    entry: "../src/tokens.ts",
     output: {
       path: path.resolve(__dirname, "../__mocks__/dist"),
       filename: "index.js"
@@ -32,11 +31,7 @@ it('converts "*.mp3" import into an audio player', async () => {
       rules: [
         {
           test: /\.ts?$/,
-          loader: "ts-loader",
-          options: {
-            context: path.resolve(__dirname, "../__mocks__"),
-            configFile: require.resolve("../__mocks__/tsconfig.json")
-          }
+          loader: "ts-loader"
         }
       ]
     },

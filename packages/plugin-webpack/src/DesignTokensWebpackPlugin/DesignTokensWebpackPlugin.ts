@@ -1,11 +1,15 @@
-import type { DesignTokens } from "@design-tokens/design-tokens";
 import { DesignTokensPluginWebpackConfig } from "types";
 import { Compiler, EntryPlugin, WebpackPluginInstance } from "webpack";
+import { Volume, createFsFromVolume } from "memfs";
+
+const mod = require("../__mocks__/dist/index");
+
+console.dir(mod);
 
 export class DesignTokensWebpackPlugin implements WebpackPluginInstance {
   public readonly name = "DesignTokensWebpackPlugin";
 
-  constructor(private config: DesignTokensPluginWebpackConfig) {}
+  constructor(protected config: DesignTokensPluginWebpackConfig) {}
 
   log(message: string) {
     console.log(`[${this.name}] ${message}`);
@@ -30,21 +34,30 @@ export class DesignTokensWebpackPlugin implements WebpackPluginInstance {
     // Tapping to the "thisCompilation" hook in order to further tap
     // to the compilation process on an earlier stage.
     compiler.hooks.thisCompilation.tap(pluginName, compilation => {
-      const childCompiler = compilation.createChildCompiler(
-        `${pluginName}Child`,
-        {
-          library: {
-            type: "commonjs-module"
-          }
-        },
-        [
-          new EntryPlugin(compiler.context, config.path, {
-            name: `child-output`,
-            filename: "design-tokens.js"
-          }),
-          new webpack.library.EnableLibraryPlugin("commonjs-module")
-        ]
-      );
+      const childCompiler = compilation.createChildCompiler(pluginName, {}, [
+        new EntryPlugin(compiler.context, config.path, {
+          name: "design-tokens",
+          filename: "[name].js"
+        }),
+        new webpack.library.EnableLibraryPlugin("var")
+      ]);
+
+      const volume = createFsFromVolume(new Volume());
+      childCompiler.outputFileSystem = volume;
+
+      childCompiler.compile((_error, childCompilation) => {
+        const asset = childCompilation!.getAsset("design-tokens.js")!;
+
+        const source = asset.source.source() as string;
+
+        const test2 = eval(source);
+
+        console.log(test2);
+
+        if (source) {
+          compilation.emitAsset("design-tokens.js", new RawSource(source));
+        }
+      });
 
       compilation.hooks.processAssets.tapAsync(
         {
@@ -52,22 +65,7 @@ export class DesignTokensWebpackPlugin implements WebpackPluginInstance {
           stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONS
         },
         (_assets, callback) => {
-          childCompiler.runAsChild((error, _entries, _compilation) => {
-            const { outputPath } = compiler;
-            const fileName = Array.from(_entries![0]!.files.values())[0]!;
-            const filePath = `${outputPath}/${fileName}`;
-
-            const designTokens = require(filePath).default as DesignTokens;
-
-            const tokens = designTokens.tokens;
-
-            compilation.emitAsset(
-              "design-tokens.css",
-              new RawSource(tokens.length.toString())
-            );
-
-            callback(error);
-          });
+          callback();
         }
       );
     });
