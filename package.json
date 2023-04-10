@@ -1,42 +1,58 @@
 {
-  "name": "@design-tokens/root",
+  "name": "@ftdigital/design-tokens",
   "version": "0.0.1",
   "description": "",
-  "private": true,
+  "author": "FT Digital",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ftdigital/design-tokens.git"
   },
-  "author": "FT Digital",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/ftdigital/design-tokens/issues"
   },
-  "homepage": "https://github.com/ftdigital/design-tokens#readme",
-  "prettier": {
-    "printWidth": 80,
-    "semi": true,
-    "singleQuote": false,
-    "tabWidth": 2,
-    "trailingComma": "none",
-    "arrowParens": "avoid"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "eslint --fix"
+  "license": "MIT",
+  "main": "./dist/design-tokens.umd.js",
+  "module": "./dist/design-tokens.es.js",
+  "typings": "./dist/index.d.ts",
+  "sideEffects": false,
+  "private": false,
+  "files": [
+    "package.json",
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/design-tokens.es.js",
+      "require": "./dist/design-tokens.umd.js"
     }
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
-    "build:design-tokens": "yarn workspace @design-tokens/design-tokens build",
-    "build:plugin-webpack": "yarn workspace @design-tokens/plugin-webpack build",
-    "build": "yarn build:design-tokens && yarn build:plugin-webpack"
+    "build": "vite build",
+    "test": "jest",
+    "test:dev": "yarn test --watch"
   },
+  "bin": {
+    "design-tokens": "./bin/index.js"
+  },
+  "size-limit": [
+    {
+      "path": "dist/design-tokens.es.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/design-tokens.umd.js",
+      "limit": "10 KB"
+    }
+  ],
   "devDependencies": {
-    "husky": "^8.0.3",
+    "typescript": "^5.0.4",
     "prettier": "^2.8.7",
-    "typescript": "^5.0.3"
+    "vite": "^2.9.12",
+    "vite-plugin-dts": "^1.2.0",
+    "vite-tsconfig-paths": "^3.5.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.0.5",
+    "@types/jest": "^29.5.0",
+    "commander": "^10.0.0"
   }
 }
