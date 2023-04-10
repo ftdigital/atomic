@@ -18,7 +18,8 @@
   "private": false,
   "files": [
     "package.json",
-    "dist"
+    "dist",
+    "bin"
   ],
   "exports": {
     ".": {

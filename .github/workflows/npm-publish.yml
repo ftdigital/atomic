@@ -9,15 +9,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # - uses: actions/checkout@v3
-      # # Setup .npmrc file to publish to npm
-      # - uses: actions/setup-node@v3
-      #   with:
-      #     node-version: "16.x"
-      #     registry-url: "https://registry.npmjs.org"
-      #     scope: "@ftdigital"
-      # - run: yarn install --frozen-lockfile
-      # - run: yarn build
-      # - run: yarn publish --access public
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - uses: actions/checkout@v3
+      # Setup .npmrc file to publish to npm
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+          registry-url: "https://registry.npmjs.org"
+          scope: "@ftdigital"
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+      - run: yarn publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
