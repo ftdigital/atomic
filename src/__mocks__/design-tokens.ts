@@ -10,7 +10,7 @@ const designTokens = DesignTokens.create({
 })
   .extend(({ create }) => ({
     color: {
-      primary: create("red"),
+      primary: create("yellow"),
       secondary: create("blue"),
       tertiary: create("green"),
     },

@@ -28,9 +28,9 @@ export class DesignTokens<
 
   get tokensMap() {
     return new Map(
-      this.tokens.map(token => [
+      this.tokens.map((token) => [
         token.dottedPath as DesignTokenPath<Config>,
-        token
+        token,
       ])
     );
   }
@@ -38,7 +38,7 @@ export class DesignTokens<
   private merge<T extends DesignTokensConfig>(tokens: T) {
     return new DesignTokens(this.options, {
       ...this.config,
-      ...tokens
+      ...tokens,
     });
   }
 
@@ -67,7 +67,7 @@ export class DesignTokens<
     ): DesignTokenConfig<{ default: Value } & ResponsiveValues> {
       return new DesignTokenConfig({
         default: defaultValue,
-        ...responsiveValues
+        ...responsiveValues,
       });
     }
 
@@ -79,7 +79,7 @@ export class DesignTokens<
 
     return {
       create,
-      use: use.bind(this)
+      use: use.bind(this),
     };
   }
   public get<Path extends DesignTokenPath<Config>>(
@@ -88,8 +88,8 @@ export class DesignTokens<
     return this.tokensMap.get(path) as DesignTokenFromPath<Config, Path>;
   }
 
-  public generateCss(): string {
-    return generateCss(this);
+  public generateCss(wrapInRoot?: boolean): string {
+    return generateCss(this, wrapInRoot);
   }
 
   public extend<T extends DesignTokensConfig>(

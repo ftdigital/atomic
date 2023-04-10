@@ -19,7 +19,7 @@ type TypeFromPath<
 
 type Dot<T extends string, U extends string> = "" extends U ? T : `${T}.${U}`;
 
-export type DesignTokenPath<T> = T extends DesignTokenConfig<any>
+export type DesignTokenPath<T> = T extends DesignTokenConfig
   ? ""
   : {
       [K in Extract<keyof T, string>]: Dot<K, DesignTokenPath<T[K]>>;

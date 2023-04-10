@@ -9,7 +9,7 @@ export type InferDesignTokenConfigValue<
     : Values["default"]
   : never;
 
-export type InferDesignTokenConfigMediaType<T extends DesignTokenConfig<any>> =
+export type InferDesignTokenConfigMediaType<T extends DesignTokenConfig> =
   T extends DesignTokenConfig<infer Values>
     ? keyof Omit<Values, "default"> extends string
       ? keyof Omit<Values, "default">

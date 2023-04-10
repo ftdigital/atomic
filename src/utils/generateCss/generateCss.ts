@@ -12,20 +12,27 @@ function mediaQueryCss(cssVars: string[], mediaQuery?: string) {
   const content = cssVars.join("");
 
   return mediaQuery
-    ? [rule(`@media(${mediaQuery}) {`), content, rule("}")].join("")
+    ? [rule(`\n@media(${mediaQuery}) {`), content, rule("}")].join("")
     : content;
+}
+
+function addRoot(cssVarsString: string) {
+  return [rule(":root {"), cssVarsString, rule("}")].join("");
 }
 
 export function generateCss<
   MediaType extends string,
   Config extends DesignTokensConfig
->({ mediaTypes, tokens, options }: DesignTokens<MediaType, Config>) {
+>(
+  { mediaTypes, tokens, options }: DesignTokens<MediaType, Config>,
+  wrapInRoot?: boolean
+) {
   const cssVars = Object.fromEntries(
-    ["default", ...mediaTypes].map(mediaType => [mediaType, []])
+    ["default", ...mediaTypes].map((mediaType) => [mediaType, []])
   ) as Record<string, string[]>;
 
-  tokens.forEach(token => {
-    ["default", ...token.mediaTypes].map(mediaType => {
+  tokens.forEach((token) => {
+    ["default", ...token.mediaTypes].map((mediaType) => {
       cssVars[mediaType]?.push(
         cssVarRule(
           token.key,
@@ -36,7 +43,7 @@ export function generateCss<
     });
   });
 
-  return Object.entries(cssVars)
+  const cssVarsString = Object.entries(cssVars)
     .filter(([_, cssVarRules]) => cssVarRules.length > 0)
     .map(([mediaType, cssVarRules]) => {
       const mediaQuery =
@@ -47,4 +54,6 @@ export function generateCss<
       return mediaQueryCss(cssVarRules, mediaQuery);
     })
     .join("");
+
+  return wrapInRoot ? addRoot(cssVarsString) : cssVarsString;
 }

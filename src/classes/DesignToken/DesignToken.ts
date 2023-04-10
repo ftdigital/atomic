@@ -1,10 +1,10 @@
 import { DesignTokenConfig } from "@classes/DesignTokenConfig";
 import {
   InferDesignTokenConfigMediaType,
-  InferDesignTokenConfigValue
+  InferDesignTokenConfigValue,
 } from "./types";
 
-export class DesignToken<Config extends DesignTokenConfig<any>> {
+export class DesignToken<Config extends DesignTokenConfig> {
   private path: string[];
   private config: Config;
 
@@ -20,11 +20,15 @@ export class DesignToken<Config extends DesignTokenConfig<any>> {
   value<MediaType extends string>(
     mediaType?: MediaType
   ): InferDesignTokenConfigValue<Config, MediaType> {
-    return this.config.values[mediaType ?? "default"];
+    return this.config.values[
+      mediaType ?? "default"
+    ] as InferDesignTokenConfigValue<Config, MediaType>;
   }
 
   get mediaTypes() {
-    return Object.keys(this.config.values);
+    return Object.keys(this.config.values).filter(
+      (value) => value !== "default"
+    ) as InferDesignTokenConfigMediaType<Config>[];
   }
 
   get dottedPath() {
