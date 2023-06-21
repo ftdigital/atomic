@@ -27,7 +27,7 @@ function getConfigPath() {
  * @param {string} [configPath]
  */
 function buildScript(configPath) {
-  return `node ./bin/build.js ${configPath}`;
+  return `node ${path.resolve(__dirname, "./build.js")} ${configPath}`;
 }
 
 const program = new Command();
