@@ -3,24 +3,23 @@
 const { Command } = require("commander");
 const nodemon = require("nodemon");
 const path = require("path");
-// const { exec } = require("node:child_process");
 const { glob } = require("glob");
 
 // @ts-ignore
 const packagejson = require("../package.json");
-
 const { exec } = require("child_process");
 
-const rootDir = process.cwd();
+const relativeProjectRoot = path.relative(__dirname, path.resolve("./"));
 
 const FILENAME = "designTokens.config.js";
 
 function getConfigPath() {
   return glob(`**/${FILENAME}`, {
+    root: relativeProjectRoot,
     ignore: "node_modules/**",
   }).then(([filePath]) => {
     if (!filePath) throw new Error(`No config file found (${FILENAME})`);
-    return path.relative(__dirname, filePath);
+    return path.join(relativeProjectRoot, filePath);
   });
 }
 
@@ -45,8 +44,12 @@ program
     const configPath = await getConfigPath();
 
     const instance = nodemon({
-      script: buildScript(configPath),
-      watch: [configPath],
+      script: configPath,
+      nodeArgs: [],
+      execMap: {
+        js: buildScript(configPath),
+      },
+      watch: [path.resolve(__dirname, configPath)],
     });
 
     instance
@@ -54,13 +57,13 @@ program
         process.exit();
       })
       .on("start", function () {
-        const filePath = path.relative(rootDir, configPath);
-        console.log(`Design tokens Waiting for change file ${filePath}`);
+        const filePath = path.relative(relativeProjectRoot, configPath);
+        console.log(`Waiting for file changes in ${filePath}`);
       })
       .on("restart", function (files) {
         files?.forEach((file) => {
-          const filePath = path.relative(rootDir, file);
-          console.log(`Design tokens created from ${filePath}`);
+          const filePath = path.relative(relativeProjectRoot, file);
+          console.log(`Files created from ${filePath}`);
         });
       });
   });
@@ -70,13 +73,9 @@ program
   .description("Create css variables from design tokens typescript file")
   .action(async () => {
     const configPath = await getConfigPath();
-
-    exec(buildScript(configPath))
-      .on("close", function () {
-        const filePath = path.relative(rootDir, configPath);
-        console.log(`Design tokens created from: ${filePath}`);
-      })
-      .on("error", console.log);
+    exec(buildScript(configPath)).on("close", function () {
+      console.log(`Design tokens created from: ${configPath}`);
+    });
   });
 
 program.parse(process.argv);

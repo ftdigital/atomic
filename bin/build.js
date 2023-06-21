@@ -1,8 +1,8 @@
-console.log({ test: "configPath" });
+#! /usr/bin/env node
 
 const { writeFileSync } = require("fs");
 
-const [configPath] = process.argv;
+const [configPath] = process.argv.slice(2);
 
 if (!configPath) throw new Error(`No configPath provided`);
 
