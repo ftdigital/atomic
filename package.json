@@ -1,6 +1,6 @@
 {
   "name": "@ftdigital/design-tokens",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "",
   "author": "FT Digital",
   "repository": {
@@ -33,7 +33,7 @@
     "test:dev": "yarn test --watch"
   },
   "bin": {
-    "design-tokens": "./bin/index.js"
+    "designTokens": "./bin/index.js"
   },
   "size-limit": [
     {
