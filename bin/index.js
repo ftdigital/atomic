@@ -8,6 +8,8 @@ const { glob } = require("glob");
 
 // @ts-ignore
 const packagejson = require("../package.json");
+
+console.log({ packagejson });
 const { exec } = require("child_process");
 
 const rootDir = process.cwd();
