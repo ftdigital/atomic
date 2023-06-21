@@ -9,17 +9,15 @@ const { glob } = require("glob");
 const packagejson = require("../package.json");
 const { exec } = require("child_process");
 
-const relativeProjectRoot = path.relative(__dirname, path.resolve("./"));
-
 const FILENAME = "designTokens.config.js";
 
 function getConfigPath() {
   return glob(`**/${FILENAME}`, {
-    root: relativeProjectRoot,
+    root: __dirname,
     ignore: "node_modules/**",
   }).then(([filePath]) => {
     if (!filePath) throw new Error(`No config file found (${FILENAME})`);
-    return path.join(relativeProjectRoot, filePath);
+    return path.relative(__dirname, filePath);
   });
 }
 
@@ -27,7 +25,9 @@ function getConfigPath() {
  * @param {string} [configPath]
  */
 function buildScript(configPath) {
-  return `node ${path.resolve(__dirname, "./build.js")} ${configPath}`;
+  return `node ${JSON.stringify(
+    path.resolve(__dirname, "./build.js")
+  )} ${JSON.stringify(configPath)}`;
 }
 
 const program = new Command();
@@ -45,7 +45,6 @@ program
 
     const instance = nodemon({
       script: configPath,
-      nodeArgs: [],
       execMap: {
         js: buildScript(configPath),
       },
@@ -57,12 +56,12 @@ program
         process.exit();
       })
       .on("start", function () {
-        const filePath = path.relative(relativeProjectRoot, configPath);
+        const filePath = path.relative(__dirname, configPath);
         console.log(`Waiting for file changes in ${filePath}`);
       })
       .on("restart", function (files) {
         files?.forEach((file) => {
-          const filePath = path.relative(relativeProjectRoot, file);
+          const filePath = path.relative(__dirname, file);
           console.log(`Files created from ${filePath}`);
         });
       });

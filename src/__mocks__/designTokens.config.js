@@ -10,7 +10,7 @@ module.exports = new DesignTokens({
   },
   theme: {
     spacing: {
-      md: 100023322,
+      md: 1,
     },
     colors: {
       primary: {

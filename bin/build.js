@@ -1,6 +1,7 @@
 #! /usr/bin/env node
 
 const { writeFileSync } = require("fs");
+const path = require("path");
 
 const [configPath] = process.argv.slice(2);
 
