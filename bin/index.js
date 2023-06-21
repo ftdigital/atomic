@@ -9,7 +9,6 @@ const { glob } = require("glob");
 // @ts-ignore
 const packagejson = require("../package.json");
 
-console.log({ packagejson });
 const { exec } = require("child_process");
 
 const rootDir = process.cwd();
@@ -35,7 +34,7 @@ function buildScript(configPath) {
 const program = new Command();
 
 program
-  .name("designTokens")
+  .name("design-tokens")
   .description(packagejson.description)
   .version(packagejson.version);
 
@@ -80,4 +79,4 @@ program
       .on("error", console.log);
   });
 
-program.parse();
+program.parse(process.argv);
