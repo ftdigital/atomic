@@ -1,6 +1,6 @@
 {
   "name": "@ftdigital/design-tokens",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "",
   "author": "FT Digital",
   "repository": {
@@ -45,6 +45,9 @@
       "limit": "10 KB"
     }
   ],
+  "dependencies": {
+    "glob": "^10.2.7"
+  },
   "devDependencies": {
     "@types/jest": "^29.5.0",
     "@types/nodemon": "^1.19.2",
@@ -58,7 +61,6 @@
     "typescript": "^5.0.4",
     "vite": "^4.3.9",
     "vite-plugin-dts": "^2.3.0",
-    "vite-tsconfig-paths": "^4.2.0",
-    "glob": "^10.2.7"
+    "vite-tsconfig-paths": "^4.2.0"
   }
 }
