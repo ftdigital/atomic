@@ -1,102 +1,51 @@
-import { DesignTokensConfig, DesignTokensOptions } from "./types";
-import { createDesignTokens, generateCss } from "@utils";
-import { DesignTokenFromPath, DesignTokenPath, DesignTokenValue } from "@types";
-import { DesignTokenConfig } from "@classes/DesignTokenConfig";
+import { DesignToken } from "@classes/DesignToken";
+import { createThemeUtils } from "@helpers/createThemeUtils";
+import {
+  DesignTokenPath,
+  DesignTokensConfig,
+  DesignTokensFormatType,
+  ThemeConfig,
+  ThemeResolved,
+  ThemeUtils,
+} from "@types";
+import {
+  formatDesignTokens,
+  createDesignTokens,
+  resolveDesignTokens,
+} from "@utils";
 
-export class DesignTokens<
-  MediaType extends string = string,
-  Config extends DesignTokensConfig = DesignTokensConfig
-> {
-  private constructor(
-    public options: DesignTokensOptions<MediaType>,
-    protected config: Config
-  ) {}
+export class DesignTokens<Theme extends ThemeConfig = ThemeConfig> {
+  tokens: DesignToken[];
 
-  public static create<MediaType extends string = string>(
-    options: DesignTokensOptions<MediaType>
+  constructor(public config: DesignTokensConfig<Theme>) {
+    this.tokens = createDesignTokens(config.theme);
+  }
+
+  get map() {
+    return new Map(this.tokens.map((token) => [token.key, token]));
+  }
+
+  get resolved(): ThemeResolved<Theme> {
+    return resolveDesignTokens(this);
+  }
+
+  get<Path extends DesignTokenPath<Theme>>(path: Path) {
+    return this.map.get(path)!.value;
+  }
+
+  format(type: DesignTokensFormatType): string {
+    return formatDesignTokens(type, this);
+  }
+
+  extend<ExtendedTheme extends ThemeConfig>(
+    callback: (utils: ThemeUtils<Theme>) => ExtendedTheme
   ) {
-    return new DesignTokens(options, {});
-  }
-
-  get mediaTypes() {
-    return Object.keys(this.options.mediaQueries) as MediaType[];
-  }
-
-  get tokens() {
-    return createDesignTokens(this.config);
-  }
-
-  get tokensMap() {
-    return new Map(
-      this.tokens.map((token) => [
-        token.dottedPath as DesignTokenPath<Config>,
-        token,
-      ])
-    );
-  }
-
-  private merge<T extends DesignTokensConfig>(tokens: T) {
-    return new DesignTokens(this.options, {
+    return new DesignTokens({
       ...this.config,
-      ...tokens,
+      theme: {
+        ...this.config.theme,
+        ...callback(createThemeUtils(this.config.theme)),
+      },
     });
-  }
-
-  get tools() {
-    const get = this.get.bind(this);
-
-    function create<Value extends DesignTokenValue>(
-      defaultValue: Value,
-      responsiveValues?: never
-    ): DesignTokenConfig<{ default: Value }>;
-    function create<
-      Value extends DesignTokenValue,
-      ResponsiveValues extends Partial<Record<MediaType, DesignTokenValue>>
-    >(
-      defaultValue: Value,
-      responsiveValues: ResponsiveValues
-    ): DesignTokenConfig<{ default: Value } & ResponsiveValues>;
-    function create<
-      Value extends DesignTokenValue,
-      ResponsiveValues extends
-        | Partial<Record<MediaType, DesignTokenValue>>
-        | undefined
-    >(
-      defaultValue: Value,
-      responsiveValues: ResponsiveValues
-    ): DesignTokenConfig<{ default: Value } & ResponsiveValues> {
-      return new DesignTokenConfig({
-        default: defaultValue,
-        ...responsiveValues,
-      });
-    }
-
-    function use<Path extends DesignTokenPath<Config>>(
-      path: Path
-    ): DesignTokenFromPath<Config, Path>["var"] {
-      return get(path)["var"];
-    }
-
-    return {
-      create,
-      use: use.bind(this),
-    };
-  }
-  public get<Path extends DesignTokenPath<Config>>(
-    path: Path
-  ): DesignTokenFromPath<Config, Path> {
-    return this.tokensMap.get(path) as DesignTokenFromPath<Config, Path>;
-  }
-
-  public generateCss(wrapInRoot?: boolean): string {
-    return generateCss(this, wrapInRoot);
-  }
-
-  public extend<T extends DesignTokensConfig>(
-    configCallback: (tools: DesignTokens<MediaType, Config>["tools"]) => T
-  ) {
-    const resolvedConfig = configCallback(this.tools);
-
-    return this.merge(resolvedConfig);
   }
 }

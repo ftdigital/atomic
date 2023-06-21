@@ -1,18 +1,36 @@
 #!/usr/bin/env node
 
 const { Command } = require("commander");
-const program = new Command();
 const nodemon = require("nodemon");
 const path = require("path");
-const { exec } = require("node:child_process");
+// const { exec } = require("node:child_process");
+const { glob } = require("glob");
 
+// @ts-ignore
 const packagejson = require("../package.json");
+const { exec } = require("child_process");
 
 const rootDir = process.cwd();
 
-function tsNodeScript(inputPath) {
-  return `ts-node --project ./bin/tsconfig.json ./src/scripts/writeTokensToCssFile.ts ${inputPath}`;
+const FILENAME = "designTokens.config.js";
+
+function getConfigPath() {
+  return glob(`**/${FILENAME}`, {
+    ignore: "node_modules/**",
+  }).then(([filePath]) => {
+    if (!filePath) throw new Error(`No config file found (${FILENAME})`);
+    return path.relative(__dirname, filePath);
+  });
 }
+
+/**
+ * @param {string} [configPath]
+ */
+function buildScript(configPath) {
+  return `node ./bin/build.js ${configPath}`;
+}
+
+const program = new Command();
 
 program
   .name("design-tokens")
@@ -22,16 +40,12 @@ program
 program
   .command("dev")
   .description("Create css variables from design tokens typescript file")
-  .argument("<path>", "path to design tokens typescript file")
-  .action((_path) => {
-    const inputPath = path.join(rootDir, _path);
+  .action(async () => {
+    const configPath = await getConfigPath();
 
     const instance = nodemon({
-      script: inputPath,
-      execMap: {
-        ts: tsNodeScript(inputPath),
-      },
-      watch: [inputPath],
+      script: buildScript(configPath),
+      watch: [configPath],
     });
 
     instance
@@ -39,14 +53,13 @@ program
         process.exit();
       })
       .on("start", function () {
-        const filePath = path.relative(rootDir, inputPath);
-        console.log(`Design tokens Waiting for change file: ${filePath}`);
+        const filePath = path.relative(rootDir, configPath);
+        console.log(`Design tokens Waiting for change file ${filePath}`);
       })
       .on("restart", function (files) {
-        files.forEach((file) => {
+        files?.forEach((file) => {
           const filePath = path.relative(rootDir, file);
-
-          console.log(`Design tokens created from: ${filePath}`);
+          console.log(`Design tokens created from ${filePath}`);
         });
       });
   });
@@ -54,15 +67,15 @@ program
 program
   .command("build")
   .description("Create css variables from design tokens typescript file")
-  .argument("<path>", "path to design tokens typescript file")
-  .action((_path) => {
-    const inputPath = path.join(rootDir, _path);
+  .action(async () => {
+    const configPath = await getConfigPath();
 
-    exec(tsNodeScript(inputPath)).on("close", function () {
-      const filePath = path.relative(rootDir, inputPath);
-
-      console.log(`Design tokens created from: ${filePath}`);
-    });
+    exec(buildScript(configPath))
+      .on("close", function () {
+        const filePath = path.relative(rootDir, configPath);
+        console.log(`Design tokens created from: ${filePath}`);
+      })
+      .on("error", console.log);
   });
 
 program.parse();
