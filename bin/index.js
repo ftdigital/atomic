@@ -35,7 +35,7 @@ function buildScript(configPath) {
 const program = new Command();
 
 program
-  .name("design-tokens")
+  .name("designTokens")
   .description(packagejson.description)
   .version(packagejson.version);
 
