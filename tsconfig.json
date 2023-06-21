@@ -2,6 +2,8 @@
   "compilerOptions": {
     "module": "ESNext",
     "target": "ES2021",
+    "allowJs": true,
+    "checkJs": true,
     "lib": ["ESNext", "ES2021", "DOM", "DOM.Iterable"],
     "moduleResolution": "node",
     "noEmit": true,
@@ -31,6 +33,6 @@
       "@types": ["./types"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "**/*.js"],
   "exclude": ["node_modules", "dist"]
 }

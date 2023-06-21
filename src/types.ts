@@ -1,40 +1,76 @@
-import type { DesignToken } from "@classes/DesignToken";
-import type { DesignTokenConfig } from "@classes/DesignTokenConfig";
-import type { DesignTokensConfig } from "@classes/DesignTokens";
+import { Dot } from "types.utils";
 
-export type DesignTokenValue = string | number;
+type KeyValuePair<
+  Value extends string | number = string | number,
+  Key extends string = string
+> = Record<Key, Value>;
 
-type TypeFromPath<
-  T extends Record<string, unknown>,
-  Path extends string // Or, if you prefer, NestedPaths<T>
-> = {
-  [K in Path]: K extends keyof T
-    ? T[K]
-    : K extends `${infer P}.${infer S}`
-    ? T[P] extends Record<string, unknown>
-      ? TypeFromPath<T[P], S>
-      : never
-    : never;
-}[Path];
+interface RecursiveKeyValuePair<
+  Value extends string | number = string | number
+> {
+  [key: string]: Value | RecursiveKeyValuePair<Value>;
+}
 
-type Dot<T extends string, U extends string> = "" extends U ? T : `${T}.${U}`;
-
-export type DesignTokenPath<T> = T extends DesignTokenConfig
+export type DesignTokenPath<T> = T extends string | number
   ? ""
   : {
       [K in Extract<keyof T, string>]: Dot<K, DesignTokenPath<T[K]>>;
     }[Extract<keyof T, string>];
 
-export type DesignTokenConfigFromPath<
-  Config extends DesignTokensConfig,
-  Path extends string
-> = TypeFromPath<Config, Path> extends DesignTokenConfig<infer Values>
-  ? DesignTokenConfig<Values>
-  : never;
+type ThemeFunction<Theme extends ThemeConfig | undefined = undefined> = <
+  Path extends Theme extends ThemeConfig
+    ? DesignTokenPath<ThemeResolved<Theme>>
+    : string
+>(
+  path: Path
+) => GetPathValue<Path>;
 
-export type DesignTokenFromPath<
-  Config extends DesignTokensConfig,
-  Path extends string
-> = TypeFromPath<Config, Path> extends DesignTokenConfig<infer Values>
-  ? DesignToken<DesignTokenConfig<Values>>
-  : never;
+export type GetPathValue<Path extends string> =
+  Path extends `${infer Type}.${string}`
+    ? Type extends keyof ThemeConfigValueMap
+      ? ThemeConfigValueMap[Type]
+      : string | number
+    : string | number;
+
+export interface ThemeUtils<Theme extends ThemeConfig | undefined = undefined> {
+  theme: ThemeFunction<Theme>;
+}
+
+type ResolvableTo<T> = T | ((utils: ThemeUtils) => T);
+
+type InferResolvableTo<T> = T extends ResolvableTo<infer A> ? A : never;
+
+type InferKeyValueValue<T extends KeyValuePair | RecursiveKeyValuePair> =
+  T extends KeyValuePair<infer Value>
+    ? Value
+    : T extends RecursiveKeyValuePair<infer Value>
+    ? Value
+    : never;
+
+interface ThemeConfigMap {
+  screens: KeyValuePair;
+  spacing: KeyValuePair;
+  fontSize: KeyValuePair;
+  colors: RecursiveKeyValuePair<string>;
+}
+
+type ThemeConfigValueMap = {
+  [Type in keyof ThemeConfigMap]: InferKeyValueValue<ThemeConfigMap[Type]>;
+};
+
+export type ThemeConfig = {
+  [Type in keyof ThemeConfigMap]?: ResolvableTo<ThemeConfigMap[Type]>;
+};
+
+export type DesignTokensFormatType = "css" | "sass" | "js" | "ts";
+
+type DesignTokensExports = Record<DesignTokensFormatType, string>;
+
+export interface DesignTokensConfig<Theme extends ThemeConfig> {
+  exports?: Partial<DesignTokensExports>;
+  theme: Theme;
+}
+
+export type ThemeResolved<Theme extends ThemeConfig> = {
+  [Type in keyof Theme]: InferResolvableTo<Theme[Type]>;
+};

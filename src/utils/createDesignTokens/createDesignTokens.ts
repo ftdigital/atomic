@@ -1,25 +1,32 @@
 import { DesignToken } from "@classes/DesignToken";
-import { DesignTokenConfig } from "@classes/DesignTokenConfig";
-import type { DesignTokensConfig } from "@classes/DesignTokens";
+import { createThemeUtils } from "@helpers/createThemeUtils";
+import { ThemeConfig } from "@types";
 
-export function createDesignTokens(designTokensConfig: DesignTokensConfig) {
-  const designTokens: DesignToken<any>[] = [];
+export function createDesignTokens<Theme extends ThemeConfig>(theme: Theme) {
+  const tokens: DesignToken[] = [];
 
-  function loop(obj: DesignTokensConfig, _path: string[] = []) {
+  function loop(obj: ThemeConfig, _path: string[] = []) {
     for (const key in obj) {
-      const result = obj[key]!;
+      let result = obj[key as keyof ThemeConfig];
+
+      const resolvedResult =
+        typeof result === "function" ? result(createThemeUtils(theme)) : result;
 
       const path = [..._path, key];
 
-      if (result instanceof DesignTokenConfig) {
-        designTokens.push(new DesignToken(path, result));
+      if (
+        typeof resolvedResult === "number" ||
+        typeof resolvedResult === "string"
+      ) {
+        const token = new DesignToken(path, resolvedResult);
+        tokens.push(token);
       } else {
-        loop(result as DesignTokensConfig, path);
+        loop(resolvedResult as ThemeConfig, path);
       }
     }
   }
 
-  loop(designTokensConfig);
+  loop(theme);
 
-  return designTokens;
+  return tokens;
 }
