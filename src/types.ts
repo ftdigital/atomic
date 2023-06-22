@@ -64,6 +64,7 @@ interface ThemeConfigMap {
   font: KeyValuePair<string>;
 
   borderRadius: KeyValuePair;
+  boxShadow: KeyValuePair;
   blur: KeyValuePair;
 }
 
