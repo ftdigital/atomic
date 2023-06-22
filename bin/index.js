@@ -56,13 +56,11 @@ program
         process.exit();
       })
       .on("start", function () {
-        const filePath = path.relative(__dirname, configPath);
-        console.log(`Waiting for file changes in ${filePath}`);
+        console.log(`Waiting for file changes in ${FILENAME}`);
       })
       .on("restart", function (files) {
-        files?.forEach((file) => {
-          const filePath = path.relative(__dirname, file);
-          console.log(`Files created from ${filePath}`);
+        files?.forEach(() => {
+          console.log(`Files created from ${FILENAME}`);
         });
       });
   });
@@ -73,7 +71,7 @@ program
   .action(async () => {
     const configPath = await getConfigPath();
     exec(buildScript(configPath)).on("close", function () {
-      console.log(`Design tokens created from: ${configPath}`);
+      console.log(`Design tokens created from ${FILENAME}`);
     });
   });
 

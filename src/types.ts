@@ -49,9 +49,22 @@ type InferKeyValueValue<T extends KeyValuePair | RecursiveKeyValuePair> =
 
 interface ThemeConfigMap {
   screens: KeyValuePair;
+  mediaQueries: KeyValuePair<string>;
+
   spacing: KeyValuePair;
-  fontSize: KeyValuePair;
   colors: RecursiveKeyValuePair<string>;
+  zIndex: KeyValuePair;
+
+  transitionDuration: KeyValuePair<string>;
+  transition: KeyValuePair<string>;
+
+  fontFamily: KeyValuePair<string>;
+  fontSize: KeyValuePair;
+  fontWeight: KeyValuePair<string>;
+  font: KeyValuePair<string>;
+
+  borderRadius: KeyValuePair;
+  blur: KeyValuePair;
 }
 
 type ThemeConfigValueMap = {

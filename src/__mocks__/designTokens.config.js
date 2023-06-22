@@ -12,6 +12,8 @@ module.exports = new DesignTokens({
     spacing: {
       md: 1,
     },
+    fontFamily: "Inter",
+
     colors: {
       primary: {
         red: "red",
