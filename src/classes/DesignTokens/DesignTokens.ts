@@ -29,6 +29,14 @@ export class DesignTokens<Theme extends ThemeConfig = ThemeConfig> {
     return resolveDesignTokens(this);
   }
 
+  get grouped() {
+    return this.tokens.reduce((map, token) => {
+      if (!map.has(token.type)) map.set(token.type, []);
+      map.set(token.type, [...(map.get(token.type) ?? []), token]);
+      return map;
+    }, new Map<string, DesignToken[]>());
+  }
+
   get<Path extends DesignTokenPath<Theme>>(path: Path) {
     return this.map.get(path)!;
   }

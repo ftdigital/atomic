@@ -7,6 +7,11 @@ export class DesignToken<Value extends string | number = string | number> {
     return this.path.join(".");
   }
 
+  get type() {
+    const [type] = this.path;
+    return type!;
+  }
+
   format(type: DesignTokensFormatType): {
     key: string;
     var: string;

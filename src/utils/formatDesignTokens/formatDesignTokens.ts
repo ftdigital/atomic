@@ -1,12 +1,16 @@
 import type { DesignTokens } from "@classes/DesignTokens";
 import { DesignTokensFormatType, ThemeConfig } from "@types";
 
-function rule(content: string) {
+function rule(content: string = "") {
   return `${content}\n`;
 }
 
 function cssRule(key: string, value: string | number) {
   return rule(`  ${key}: ${value};`);
+}
+
+function comment(content: string) {
+  return rule(`//  ${content}`);
 }
 
 function wrapInRoot(cssVarsString: string) {
@@ -15,23 +19,39 @@ function wrapInRoot(cssVarsString: string) {
 
 export function formatDesignTokens<Theme extends ThemeConfig>(
   type: DesignTokensFormatType,
-  { map }: DesignTokens<Theme>
+  { grouped }: DesignTokens<Theme>
 ) {
   switch (type) {
     case "css":
       return wrapInRoot(
-        Array.from(map.values())
-          .map((token) => {
-            const { key } = token.format("css");
-            return cssRule(key, token.value);
+        Array.from(grouped)
+          .map(([type, tokens]) => {
+            const rules = [comment(`${type} variables`)];
+
+            tokens.forEach((token) => {
+              const { key } = token.format("css");
+              return rules.push(cssRule(key, token.value));
+            });
+
+            rules.push(rule());
+
+            return rules.join("");
           })
           .join("")
       );
     case "sass":
-      return Array.from(map.values())
-        .map((token) => {
-          const { key } = token.format("sass");
-          return cssRule(key, token.value);
+      return Array.from(grouped)
+        .map(([type, tokens]) => {
+          const rules = [comment(`${type} variables`)];
+
+          tokens.forEach((token) => {
+            const { key } = token.format("sass");
+            return rules.push(cssRule(key, token.value));
+          });
+
+          rules.push(rule());
+
+          return rules.join("");
         })
         .join("");
     default:
