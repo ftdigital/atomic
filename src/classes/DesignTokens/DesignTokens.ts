@@ -30,7 +30,7 @@ export class DesignTokens<Theme extends ThemeConfig = ThemeConfig> {
   }
 
   get<Path extends DesignTokenPath<Theme>>(path: Path) {
-    return this.map.get(path)!.value;
+    return this.map.get(path)!;
   }
 
   format(type: DesignTokensFormatType): string {

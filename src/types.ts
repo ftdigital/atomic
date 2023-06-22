@@ -75,7 +75,7 @@ export type ThemeConfig = {
   [Type in keyof ThemeConfigMap]?: ResolvableTo<ThemeConfigMap[Type]>;
 };
 
-export type DesignTokensFormatType = "css" | "sass" | "js" | "ts";
+export type DesignTokensFormatType = "css" | "sass";
 
 type DesignTokensExports = Record<DesignTokensFormatType, string>;
 

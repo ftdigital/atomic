@@ -15,7 +15,7 @@ function wrapInRoot(cssVarsString: string) {
 
 export function formatDesignTokens<Theme extends ThemeConfig>(
   type: DesignTokensFormatType,
-  { map, resolved }: DesignTokens<Theme>
+  { map }: DesignTokens<Theme>
 ) {
   switch (type) {
     case "css":
@@ -34,11 +34,6 @@ export function formatDesignTokens<Theme extends ThemeConfig>(
           return cssRule(key, token.value);
         })
         .join("");
-
-    case "js":
-      return "export default " + JSON.stringify(resolved);
-    case "ts":
-      return "export default " + JSON.stringify(resolved) + " as const;";
     default:
       throw new Error(`No formatting found for type ${type}`);
   }

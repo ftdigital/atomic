@@ -7,17 +7,20 @@ export class DesignToken<Value extends string | number = string | number> {
     return this.path.join(".");
   }
 
-  format(type: DesignTokensFormatType) {
+  format(type: DesignTokensFormatType): {
+    key: string;
+    var: string;
+  } {
     switch (type) {
       case "css":
         return {
           key: `--${this.name}`,
-          name: `var(${this.name})`,
+          var: `var(${this.name})`,
         };
       case "sass":
         return {
           key: `$${this.name}`,
-          name: `$${this.name}`,
+          var: `$${this.name}`,
         };
       default:
         throw new Error(`No formatting found for type ${type}`);

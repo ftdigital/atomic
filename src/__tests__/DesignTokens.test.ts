@@ -18,5 +18,5 @@ it("Should return the correct value", () => {
 });
 
 it("Should return the correct value", () => {
-  expect(designTokens.get("spacing.md")).toStrictEqual(10);
+  expect(designTokens.get("spacing.md").value).toStrictEqual(10);
 });
