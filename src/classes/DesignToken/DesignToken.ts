@@ -33,6 +33,6 @@ export class DesignToken<Value extends string | number = string | number> {
   }
 
   get name() {
-    return this.path.join("-");
+    return this.path.join("-").replace(".", "-");
   }
 }
