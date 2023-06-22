@@ -6,11 +6,16 @@ function rule(content: string = "") {
 }
 
 function cssRule(key: string, value: string | number) {
-  return rule(`  ${key}: ${value};`);
+  return rule(`${key}: ${value};`);
 }
 
-function comment(content: string) {
-  return rule(`//  ${content}`);
+function comment(content: string, formatType: DesignTokensFormatType) {
+  switch (formatType) {
+    case "css":
+      return rule(`/* ${content} */`);
+    case "sass":
+      return rule(`// ${content}`);
+  }
 }
 
 function wrapInRoot(cssVarsString: string) {
@@ -26,7 +31,7 @@ export function formatDesignTokens<Theme extends ThemeConfig>(
       return wrapInRoot(
         Array.from(grouped)
           .map(([type, tokens]) => {
-            const rules = [comment(`${type} variables`)];
+            const rules = [comment(`${type} variables`, "css")];
 
             tokens.forEach((token) => {
               const { key } = token.format("css");
@@ -42,7 +47,7 @@ export function formatDesignTokens<Theme extends ThemeConfig>(
     case "sass":
       return Array.from(grouped)
         .map(([type, tokens]) => {
-          const rules = [comment(`${type} variables`)];
+          const rules = [comment(`${type} variables`, "sass")];
 
           tokens.forEach((token) => {
             const { key } = token.format("sass");
