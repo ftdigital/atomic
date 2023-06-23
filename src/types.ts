@@ -88,3 +88,17 @@ export interface DesignTokensConfig<Theme extends ThemeConfig> {
 export type ThemeResolved<Theme extends ThemeConfig> = {
   [Type in keyof Theme]: InferResolvableTo<Theme[Type]>;
 };
+
+export interface ThemeUtilsFunction<Theme extends ThemeConfig> {
+  (utils: ThemeUtils<Theme>): Interpolation<Theme>;
+}
+
+export type Interpolation<Theme extends ThemeConfig> =
+  | ThemeUtilsFunction<Theme>
+  | TemplateStringsArray
+  | string
+  | number
+  | false
+  | undefined
+  | null
+  | Interpolation<Theme>[];
