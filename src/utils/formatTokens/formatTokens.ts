@@ -1,5 +1,5 @@
-import type { DesignTokens } from "@classes/DesignTokens";
-import { DesignTokensFormatType, ThemeConfig } from "@types";
+import type { Atomic } from "@classes/Atomic";
+import { AtomicMode, ThemeConfig } from "@types";
 
 function rule(content: string = "") {
   return `${content}\n`;
@@ -9,8 +9,8 @@ function cssRule(key: string, value: string | number) {
   return rule(`${key}: ${value};`);
 }
 
-function comment(content: string, formatType: DesignTokensFormatType) {
-  switch (formatType) {
+function comment(content: string, mode: AtomicMode) {
+  switch (mode) {
     case "css":
       return rule(`/* ${content} */`);
     case "sass":
@@ -22,21 +22,17 @@ function wrapInRoot(cssVarsString: string) {
   return [rule(":root {"), cssVarsString, rule("}")].join("");
 }
 
-export function formatDesignTokens<Theme extends ThemeConfig>(
-  type: DesignTokensFormatType,
-  { grouped }: DesignTokens<Theme>
-) {
-  switch (type) {
+export function formatTokens<Theme extends ThemeConfig>(atomic: Atomic<Theme>) {
+  switch (atomic.config.mode) {
     case "css":
       return wrapInRoot(
-        Array.from(grouped)
+        Array.from(atomic.groupedTokens)
           .map(([type, tokens]) => {
             const rules = [comment(`${type} variables`, "css")];
 
-            tokens.forEach((token) => {
-              const { key } = token.format("css");
-              return rules.push(cssRule(key, token.value));
-            });
+            tokens.forEach((token) =>
+              rules.push(cssRule(token.varKey, token.value))
+            );
 
             rules.push(rule());
 
@@ -45,14 +41,13 @@ export function formatDesignTokens<Theme extends ThemeConfig>(
           .join("")
       );
     case "sass":
-      return Array.from(grouped)
+      return Array.from(atomic.groupedTokens)
         .map(([type, tokens]) => {
           const rules = [comment(`${type} variables`, "sass")];
 
-          tokens.forEach((token) => {
-            const { key } = token.format("sass");
-            return rules.push(cssRule(key, token.value));
-          });
+          tokens.forEach((token) =>
+            rules.push(cssRule(token.varKey, token.value))
+          );
 
           rules.push(rule());
 
@@ -60,6 +55,6 @@ export function formatDesignTokens<Theme extends ThemeConfig>(
         })
         .join("");
     default:
-      throw new Error(`No formatting found for type ${type}`);
+      throw new Error(`No formatting found for type ${atomic.config.mode}`);
   }
 }

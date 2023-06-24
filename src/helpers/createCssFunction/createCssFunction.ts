@@ -1,28 +1,27 @@
-import { createThemeUtils } from "@helpers/createThemeUtils";
-import { Interpolation, ThemeConfig } from "@types";
+import type { Atomic } from "@classes/Atomic";
+import type { Interpolation, ThemeConfig } from "@types";
+import { resolveInterpolation } from "@utils";
 
-export function createCssFunction<Theme extends ThemeConfig>(theme: Theme) {
-  function resolveInterpolation(interpolation: Interpolation<Theme>) {
-    if (!interpolation) return "";
-    if (typeof interpolation === "function") {
-      return interpolation(createThemeUtils(theme))?.toString();
-    }
+export function createCssFunction<Theme extends ThemeConfig>(
+  atomic: Atomic<Theme>
+) {
+  return function css(...interpolations: Interpolation<Theme>[]): string[] {
+    const resolvedInterpolations = interpolations.map((interpolation) =>
+      resolveInterpolation(atomic.utils, interpolation).flatMap((rule) => rule)
+    );
 
-    return interpolation?.toString();
-  }
+    const [base, ...args] = resolvedInterpolations;
 
-  return function css(...interpolations: Interpolation<Theme>[]) {
-    const [base, ...args] = interpolations as [
-      TemplateStringsArray,
-      ...Interpolation<Theme>[]
-    ];
+    if (!base) return [];
 
     return base
-      .flatMap((partial, index) => {
-        const interpolation = args[index];
-        return partial + resolveInterpolation(interpolation);
+      .map((partial, index) => {
+        const arg = args[index];
+        return partial + (arg?.toString?.() ?? "");
       })
-      .filter(Boolean)
-      .join("");
+      .join("")
+      .split("\n")
+      .map((rule) => rule.trim())
+      .filter(Boolean);
   };
 }

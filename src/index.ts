@@ -1,1 +1,1 @@
-export { DesignTokens } from "./classes/DesignTokens";
+export { Atomic } from "./classes/Atomic";

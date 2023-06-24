@@ -9,7 +9,7 @@ const { glob } = require("glob");
 const packagejson = require("../package.json");
 const { exec } = require("child_process");
 
-const FILENAME = "designTokens.config.js";
+const FILENAME = "atomic.config.js";
 
 function getConfigPath() {
   return glob(`**/${FILENAME}`, {

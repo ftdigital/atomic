@@ -11,19 +11,17 @@ interface RecursiveKeyValuePair<
   [key: string]: Value | RecursiveKeyValuePair<Value>;
 }
 
-export type DesignTokenPath<T> = T extends string | number
+export type TokenPath<T> = T extends string | number
   ? ""
   : {
-      [K in Extract<keyof T, string>]: Dot<K, DesignTokenPath<T[K]>>;
+      [K in Extract<keyof T, string>]: Dot<K, TokenPath<T[K]>>;
     }[Extract<keyof T, string>];
 
-type ThemeFunction<Theme extends ThemeConfig | undefined = undefined> = <
-  Path extends Theme extends ThemeConfig
-    ? DesignTokenPath<ThemeResolved<Theme>>
-    : string
+type ThemeFunction<Theme extends ThemeConfig> = <
+  Path extends TokenPath<ThemeResolved<Theme>>
 >(
   path: Path
-) => GetPathValue<Path>;
+) => string;
 
 export type GetPathValue<Path extends string> =
   Path extends `${infer Type}.${string}`
@@ -32,7 +30,7 @@ export type GetPathValue<Path extends string> =
       : string | number
     : string | number;
 
-export interface ThemeUtils<Theme extends ThemeConfig | undefined = undefined> {
+export interface ThemeUtils<Theme extends ThemeConfig = any> {
   theme: ThemeFunction<Theme>;
 }
 
@@ -76,12 +74,14 @@ export type ThemeConfig = {
   [Type in keyof ThemeConfigMap]?: ResolvableTo<ThemeConfigMap[Type]>;
 };
 
-export type DesignTokensFormatType = "css" | "sass";
+export type AtomicMode = "css" | "sass";
 
-type DesignTokensExports = Record<DesignTokensFormatType, string>;
-
-export interface DesignTokensConfig<Theme extends ThemeConfig> {
-  exports?: Partial<DesignTokensExports>;
+export interface AtomicConfig<Theme extends ThemeConfig> {
+  mode: AtomicMode;
+  exports?: {
+    vars?: string;
+    styles?: string;
+  };
   theme: Theme;
 }
 
@@ -93,7 +93,7 @@ export interface ThemeUtilsFunction<Theme extends ThemeConfig> {
   (utils: ThemeUtils<Theme>): Interpolation<Theme>;
 }
 
-export type Interpolation<Theme extends ThemeConfig> =
+export type Interpolation<Theme extends ThemeConfig = ThemeConfig> =
   | ThemeUtilsFunction<Theme>
   | TemplateStringsArray
   | string
@@ -102,3 +102,9 @@ export type Interpolation<Theme extends ThemeConfig> =
   | undefined
   | null
   | Interpolation<Theme>[];
+
+export type CssFunction<Theme extends ThemeConfig> = (
+  ...interpolation: Interpolation<Theme>[]
+) => string[];
+
+export type StylesConfig = Record<string, string[]>;

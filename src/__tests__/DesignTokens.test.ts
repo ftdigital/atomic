@@ -1,6 +1,7 @@
-import { DesignTokens } from "@classes/DesignTokens";
+import { Atomic } from "@classes/Atomic";
 
-const designTokens = new DesignTokens({
+const tokens = new Atomic({
+  mode: "css",
   theme: {
     spacing: {
       md: 10,
@@ -14,9 +15,9 @@ const designTokens = new DesignTokens({
 });
 
 it("Should return the correct value", () => {
-  expect(designTokens).toStrictEqual(designTokens);
+  expect(tokens).toStrictEqual(tokens);
 });
 
 it("Should return the correct value", () => {
-  expect(designTokens.get("spacing.md").value).toStrictEqual(10);
+  expect(tokens.getToken("spacing.md").value).toStrictEqual(10);
 });
