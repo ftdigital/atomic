@@ -19,5 +19,5 @@ it("Should return the correct value", () => {
 });
 
 it("Should return the correct value", () => {
-  expect(tokens.getToken("spacing.md").value).toStrictEqual(10);
+  expect(tokens.token("spacing.md").value).toStrictEqual(10);
 });

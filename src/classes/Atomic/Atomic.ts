@@ -9,7 +9,7 @@ import type {
 import { AtomicStyle } from "@classes/AtomicStyle";
 import type { AtomicToken } from "@classes/AtomicToken";
 import { createAtomicTokens, formatTokens, groupTokens } from "@utils";
-import { createAtomicStyles } from "utils/createAtomicStyles";
+import { createAtomicStyles } from "@utils";
 
 export class Atomic<Theme extends ThemeConfig = ThemeConfig> {
   stylesMap: Map<string, AtomicStyle<Theme>> = new Map();
@@ -42,10 +42,6 @@ export class Atomic<Theme extends ThemeConfig = ThemeConfig> {
     return formatTokens(this);
   }
 
-  style(path: string) {
-    return this.stylesMap.get(path)!;
-  }
-
   merge<ExtendedTheme extends ThemeConfig>(
     config: AtomicConfig<ExtendedTheme>
   ) {
@@ -65,10 +61,6 @@ export class Atomic<Theme extends ThemeConfig = ThemeConfig> {
         ...callback(this.utils),
       },
     });
-  }
-
-  getStyle(path: string) {
-    return this.stylesMap.get(path)!;
   }
 
   addStyles(stylesConfig: StylesConfig<Theme>) {

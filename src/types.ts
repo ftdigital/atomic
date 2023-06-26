@@ -23,13 +23,6 @@ type ThemeFunction<Theme extends ThemeConfig> = <
   path: Path
 ) => string;
 
-export type GetPathValue<Path extends string> =
-  Path extends `${infer Type}.${string}`
-    ? Type extends keyof ThemeConfigValueMap
-      ? ThemeConfigValueMap[Type]
-      : string | number
-    : string | number;
-
 export interface ThemeUtils<Theme extends ThemeConfig = any> {
   theme: ThemeFunction<Theme>;
 }
@@ -66,7 +59,7 @@ interface ThemeConfigMap {
   blur: KeyValuePair;
 }
 
-type ThemeConfigValueMap = {
+export type ThemeConfigValueMap = {
   [Type in keyof ThemeConfigMap]: InferKeyValueValue<ThemeConfigMap[Type]>;
 };
 

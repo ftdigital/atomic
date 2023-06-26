@@ -25,7 +25,7 @@ export function createAtomicTokens<Theme extends ThemeConfig>(
         const token = new AtomicToken(atomic, path, resolvedResult);
         tokensMap.set(token.key, token);
       } else {
-        loop(config as Theme, path);
+        loop(resolvedResult as Theme, path);
       }
     }
   }

@@ -11,16 +11,12 @@ export function resolveInterpolations(
   function resolveInterpolation(interpolation: Interpolation): string[] {
     if (interpolation) {
       if (isTemplateStringArray(interpolation)) {
-        console.log(
-          interpolation.map(
-            (string, index) =>
-              string + resolveInterpolation(interpolations[index + 1])
-          )
+        return interpolation.map(
+          (string, index) =>
+            string + resolveInterpolation(interpolations[index + 1])
         );
-        console.log({ interpolation, raw: interpolation.raw, interpolations });
-        return Array.from(interpolation);
       } else if (Array.isArray(interpolation)) {
-        return interpolation.flatMap((item) => resolveInterpolation(item));
+        return interpolation.flatMap(resolveInterpolation);
       } else if (typeof interpolation === "function") {
         return resolveInterpolation(interpolation(utils));
       } else {
@@ -31,7 +27,5 @@ export function resolveInterpolations(
     return [];
   }
 
-  return interpolations.flatMap((interpolation) =>
-    resolveInterpolation(interpolation)
-  );
+  return interpolations.flatMap(resolveInterpolation);
 }
