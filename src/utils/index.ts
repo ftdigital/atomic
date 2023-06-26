@@ -3,4 +3,4 @@ export * from "./createAtomicTokens";
 export * from "./createAtomicStyles";
 export * from "./formatTokens";
 export * from "./groupTokens";
-export * from "./resolveInterpolations";
+export * from "./resolveInterpolation";

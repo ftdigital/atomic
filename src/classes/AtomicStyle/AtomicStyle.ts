@@ -1,6 +1,6 @@
 import type { Atomic } from "@classes/Atomic";
 import type { Interpolation, ThemeConfig } from "@types";
-import { resolveInterpolations } from "@utils";
+import { resolveInterpolation } from "@utils";
 
 export class AtomicStyle<Theme extends ThemeConfig> {
   constructor(
@@ -14,6 +14,8 @@ export class AtomicStyle<Theme extends ThemeConfig> {
   }
 
   toString() {
-    return resolveInterpolations(this.atomic.utils, this.interpolations);
+    return resolveInterpolation(this.atomic.utils, this.interpolations).join(
+      ""
+    );
   }
 }
