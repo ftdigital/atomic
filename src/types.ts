@@ -76,6 +76,10 @@ export type ThemeConfig = {
 
 export type AtomicMode = "css" | "sass";
 
+export type StylesConfig<Theme extends ThemeConfig = ThemeConfig> = {
+  [key: string]: Interpolation<Theme>[] | StylesConfig<Theme>;
+};
+
 export interface AtomicConfig<Theme extends ThemeConfig> {
   mode: AtomicMode;
   exports?: {
@@ -83,6 +87,7 @@ export interface AtomicConfig<Theme extends ThemeConfig> {
     styles?: string;
   };
   theme: Theme;
+  styles?: StylesConfig<Theme>;
 }
 
 export type ThemeResolved<Theme extends ThemeConfig> = {
@@ -103,8 +108,6 @@ export type Interpolation<Theme extends ThemeConfig = ThemeConfig> =
   | null
   | Interpolation<Theme>[];
 
-export type CssFunction<Theme extends ThemeConfig> = (
+export type CssFunction<Theme extends ThemeConfig = ThemeConfig> = (
   ...interpolation: Interpolation<Theme>[]
-) => string[];
-
-export type StylesConfig = Record<string, string[]>;
+) => Interpolation<Theme>[];

@@ -3,8 +3,11 @@ import { AtomicToken } from "@classes/AtomicToken";
 import type { ThemeConfig, ThemeResolved } from "@types";
 
 export function createAtomicTokens<Theme extends ThemeConfig>(
-  atomic: Atomic<Theme>
+  atomic: Atomic<Theme>,
+  config: Theme
 ) {
+  const tokensMap = new Map(atomic.tokensMap);
+
   function loop(obj: ThemeConfig, _path: string[] = []) {
     for (const key in obj) {
       let result = obj[key as keyof typeof obj];
@@ -20,14 +23,14 @@ export function createAtomicTokens<Theme extends ThemeConfig>(
         typeof resolvedResult === "string"
       ) {
         const token = new AtomicToken(atomic, path, resolvedResult);
-        atomic.tokensMap.set(token.key, token);
+        tokensMap.set(token.key, token);
       } else {
-        loop(resolvedResult as ThemeConfig, path);
+        loop(config as Theme, path);
       }
     }
   }
 
-  loop(atomic.config.theme);
+  loop(config);
 
-  return atomic.tokensMap;
+  return tokensMap;
 }

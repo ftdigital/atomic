@@ -5,19 +5,19 @@ import type {
   ThemeConfig,
   ThemeUtils,
   ThemeResolved,
-  CssFunction,
 } from "@types";
 import { AtomicStyle } from "@classes/AtomicStyle";
 import type { AtomicToken } from "@classes/AtomicToken";
 import { createAtomicTokens, formatTokens, groupTokens } from "@utils";
-import { createCssFunction } from "@helpers/createCssFunction";
+import { createAtomicStyles } from "utils/createAtomicStyles";
 
 export class Atomic<Theme extends ThemeConfig = ThemeConfig> {
   stylesMap: Map<string, AtomicStyle<Theme>> = new Map();
   tokensMap: Map<string, AtomicToken> = new Map();
 
   constructor(public config: AtomicConfig<Theme>) {
-    this.tokensMap = createAtomicTokens(this);
+    this.tokensMap = createAtomicTokens(this, config.theme);
+    this.stylesMap = createAtomicStyles(this, config.styles ?? {});
   }
 
   get tokens() {
@@ -26,7 +26,7 @@ export class Atomic<Theme extends ThemeConfig = ThemeConfig> {
 
   get utils(): ThemeUtils<Theme> {
     return {
-      theme: (path) => this.getToken(path).var,
+      theme: (path) => this.token(path).var,
     };
   }
 
@@ -34,7 +34,7 @@ export class Atomic<Theme extends ThemeConfig = ThemeConfig> {
     return groupTokens(this.tokens);
   }
 
-  getToken<Path extends TokenPath<ThemeResolved<Theme>>>(path: Path) {
+  token<Path extends TokenPath<ThemeResolved<Theme>>>(path: Path) {
     return this.tokensMap.get(path)!;
   }
 
@@ -42,33 +42,36 @@ export class Atomic<Theme extends ThemeConfig = ThemeConfig> {
     return formatTokens(this);
   }
 
-  merge<ExtendedTheme extends ThemeConfig>(config: ExtendedTheme) {
+  style(path: string) {
+    return this.stylesMap.get(path)!;
+  }
+
+  merge<ExtendedTheme extends ThemeConfig>(
+    config: AtomicConfig<ExtendedTheme>
+  ) {
     return new Atomic({
       ...this.config,
       ...config,
-      theme: {
-        ...this.config.theme,
-      },
     });
   }
 
   extendTheme<ExtendedTheme extends ThemeConfig>(
     callback: (utils: ThemeUtils<Theme>) => ExtendedTheme
   ) {
-    return this.merge(callback(this.utils));
+    return this.merge({
+      ...this.config,
+      theme: {
+        ...this.config.theme,
+        ...callback(this.utils),
+      },
+    });
   }
 
   getStyle(path: string) {
     return this.stylesMap.get(path)!;
   }
 
-  addStyle(callback: ({ css }: { css: CssFunction<Theme> }) => StylesConfig) {
-    Object.entries(callback({ css: createCssFunction(this) })).forEach(
-      ([name, style]) => {
-        const path = [name];
-        const atomicStyle = new AtomicStyle(this, path, style);
-        this.stylesMap.set(atomicStyle.key, atomicStyle);
-      }
-    );
+  addStyles(stylesConfig: StylesConfig<Theme>) {
+    this.stylesMap = createAtomicStyles(this, stylesConfig);
   }
 }
