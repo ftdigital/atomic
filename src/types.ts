@@ -17,10 +17,8 @@ export type TokenPath<T> = T extends string | number
       [K in Extract<keyof T, string>]: Dot<K, TokenPath<T[K]>>;
     }[Extract<keyof T, string>];
 
-type ThemeFunction<Theme extends ThemeConfig> = <
-  Path extends TokenPath<ThemeResolved<Theme>>
->(
-  path: Path
+type ThemeFunction<Theme extends ThemeConfig> = (
+  path: TokenPath<ThemeResolved<Theme>>
 ) => string;
 
 export interface ThemeUtils<Theme extends ThemeConfig> {
