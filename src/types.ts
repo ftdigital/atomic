@@ -23,11 +23,11 @@ type ThemeFunction<Theme extends ThemeConfig> = <
   path: Path
 ) => string;
 
-export interface ThemeUtils<Theme extends ThemeConfig = any> {
+export interface ThemeUtils<Theme extends ThemeConfig> {
   theme: ThemeFunction<Theme>;
 }
 
-type ResolvableTo<T> = T | ((utils: ThemeUtils) => T);
+type ResolvableTo<T> = T | ((utils: ThemeUtils<any>) => T);
 
 type InferResolvableTo<T> = T extends ResolvableTo<infer A> ? A : never;
 

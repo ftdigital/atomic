@@ -12,7 +12,7 @@ const tokens = new Atomic({
       },
     },
   },
-});
+}).extendTheme(({ theme }) => ({ font: { sm: theme("spacing.md") } }));
 
 it("Should return the correct value", () => {
   expect(tokens).toStrictEqual(tokens);
