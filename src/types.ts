@@ -1,4 +1,4 @@
-import { Dot } from "types.utils";
+import { Dot } from "./types.utils";
 
 type KeyValuePair<
   Value extends string | number = string | number,
@@ -114,7 +114,7 @@ export interface AtomicInstance<Theme extends ThemeConfig> {
   token: <Path extends TokenPath<ThemeResolved<Theme>>>(
     path: Path
   ) => AtomicTokenInstance;
-  theme: <Path extends TokenPath<ThemeResolved<Theme>>>(path: Path) => string;
+  theme: (path: TokenPath<ThemeResolved<Theme>>) => string;
   extendTheme: <ExtendedTheme extends ThemeConfig>(
     callback: (utils: ThemeUtils<Theme>) => ExtendedTheme
   ) => AtomicInstance<Theme>;

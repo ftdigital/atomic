@@ -41,7 +41,7 @@ export class Atomic<Theme extends ThemeConfig>
     return this.tokensMap.get(path)!;
   }
 
-  theme<Path extends TokenPath<ThemeResolved<Theme>>>(path: Path) {
+  theme(path: TokenPath<ThemeResolved<Theme>>) {
     return this.tokensMap.get(path)?.var ?? "";
   }
 

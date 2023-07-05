@@ -7,7 +7,7 @@ const [configPath] = process.argv.slice(2);
 
 if (!configPath) throw new Error(`No configPath provided`);
 
-/** @type {import('@classes/Atomic').Atomic} */
+/** @type {import('@classes/Atomic').Atomic<any>} */
 const atomic = require(configPath);
 
 if (atomic.config.exports) {
