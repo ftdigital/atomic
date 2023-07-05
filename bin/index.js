@@ -39,7 +39,7 @@ program
 
 program
   .command("dev")
-  .description("Create css variables from design tokens typescript file")
+  .description("Create css files from Atomic config")
   .action(async () => {
     const configPath = await getConfigPath();
 
@@ -56,22 +56,22 @@ program
         process.exit();
       })
       .on("start", function () {
-        console.log(`Waiting for file changes in ${FILENAME}`);
+        console.log(`Atomic waiting for file changes in ${FILENAME}`);
       })
       .on("restart", function (files) {
         files?.forEach(() => {
-          console.log(`Files created from ${FILENAME}`);
+          console.log(`Atomic files created from ${FILENAME}`);
         });
       });
   });
 
 program
   .command("build")
-  .description("Create css variables from design tokens typescript file")
+  .description("Create css files from atomic config")
   .action(async () => {
     const configPath = await getConfigPath();
     exec(buildScript(configPath)).on("close", function () {
-      console.log(`Design tokens created from ${FILENAME}`);
+      console.log(`Atomic files created from ${FILENAME}`);
     });
   });
 

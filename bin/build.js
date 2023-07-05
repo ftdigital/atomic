@@ -7,11 +7,13 @@ const [configPath] = process.argv.slice(2);
 if (!configPath) throw new Error(`No configPath provided`);
 
 /** @type {import('@classes/Atomic').Atomic} */
-const tokens = require(configPath);
+const atomic = require(configPath);
 
-Object.entries(tokens.config.exports || {}).map(([type, path]) => {
-  // @ts-ignore
-  const fileContent = tokens.format(type);
-
-  writeFileSync(path, fileContent, "utf8");
-});
+if (atomic.config.exports) {
+  if (atomic.config.exports.tokens) {
+    writeFileSync(atomic.config.exports.tokens, atomic.formatTokens(), "utf8");
+  }
+  if (atomic.config.exports.styles) {
+    writeFileSync(atomic.config.exports.styles, atomic.formatStyles(), "utf8");
+  }
+}

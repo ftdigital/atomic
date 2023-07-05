@@ -42,6 +42,10 @@ export class Atomic<Theme extends ThemeConfig = ThemeConfig> {
     return formatTokens(this);
   }
 
+  formatStyles(): string {
+    return "";
+  }
+
   merge<ExtendedTheme extends ThemeConfig>(
     config: AtomicConfig<ExtendedTheme>
   ) {

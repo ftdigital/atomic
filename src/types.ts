@@ -76,7 +76,7 @@ export type StylesConfig<Theme extends ThemeConfig> = {
 export interface AtomicConfig<Theme extends ThemeConfig> {
   mode: AtomicMode;
   exports?: {
-    vars?: string;
+    tokens?: string;
     styles?: string;
   };
   theme: Theme;
