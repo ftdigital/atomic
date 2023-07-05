@@ -2,7 +2,7 @@
 
 const { writeFileSync } = require("fs");
 
-const [configPath] = process.argv.slice(3);
+const [configPath] = process.argv.slice(2);
 
 if (!configPath) throw new Error(`No configPath provided`);
 

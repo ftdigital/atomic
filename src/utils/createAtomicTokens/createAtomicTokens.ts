@@ -6,7 +6,7 @@ export function createAtomicTokens<Theme extends ThemeConfig>(
   atomic: Atomic<Theme>,
   config: Theme
 ) {
-  const tokensMap = new Map(atomic.tokensMap);
+  const tokensMap = atomic.tokensMap;
 
   function loop(obj: ThemeConfig, _path: string[] = []) {
     for (const key in obj) {

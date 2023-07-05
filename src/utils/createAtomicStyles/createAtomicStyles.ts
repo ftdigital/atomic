@@ -6,7 +6,7 @@ export function createAtomicStyles<Theme extends ThemeConfig>(
   atomic: Atomic<Theme>,
   config: StylesConfig<Theme>
 ) {
-  const stylesMap = new Map(atomic.stylesMap);
+  const stylesMap = atomic.stylesMap;
 
   function loop(obj: StylesConfig<Theme>, _path: string[] = []) {
     for (const key in obj) {
