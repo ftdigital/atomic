@@ -1,6 +1,9 @@
 import { Atomic } from "@classes/Atomic";
+import { AtomicTokenInstance } from "@types";
 
-export class AtomicToken<Value extends string | number = string | number> {
+export class AtomicToken<Value extends string | number = string | number>
+  implements AtomicTokenInstance
+{
   constructor(
     protected atomic: Atomic<any>,
     public path: string[],

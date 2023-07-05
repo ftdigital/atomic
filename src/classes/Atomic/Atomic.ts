@@ -5,13 +5,16 @@ import type {
   ThemeConfig,
   ThemeUtils,
   ThemeResolved,
+  AtomicInstance,
 } from "@types";
 import { AtomicStyle } from "@classes/AtomicStyle";
 import type { AtomicToken } from "@classes/AtomicToken";
 import { createAtomicTokens, formatTokens, groupTokens } from "@utils";
 import { createAtomicStyles } from "@utils";
 
-export class Atomic<Theme extends ThemeConfig> {
+export class Atomic<Theme extends ThemeConfig>
+  implements AtomicInstance<Theme>
+{
   stylesMap: Map<string, AtomicStyle<Theme>> = new Map();
   tokensMap: Map<string, AtomicToken> = new Map();
 
@@ -36,6 +39,10 @@ export class Atomic<Theme extends ThemeConfig> {
 
   token<Path extends TokenPath<ThemeResolved<Theme>>>(path: Path) {
     return this.tokensMap.get(path)!;
+  }
+
+  theme<Path extends TokenPath<ThemeResolved<Theme>>>(path: Path) {
+    return this.tokensMap.get(path)?.var ?? "";
   }
 
   formatTokens(): string {

@@ -17,12 +17,12 @@ export type TokenPath<T> = T extends string | number
       [K in Extract<keyof T, string>]: Dot<K, TokenPath<T[K]>>;
     }[Extract<keyof T, string>];
 
-interface ThemeFunction<Path extends string = string> {
-  (path: Path): string;
+interface ThemeFunction<Theme extends ThemeConfig> {
+  (path: TokenPath<ThemeResolved<Theme>>): string;
 }
 
 export interface ThemeUtils<Theme extends ThemeConfig> {
-  theme: ThemeFunction<TokenPath<ThemeResolved<Theme>>>;
+  theme: ThemeFunction<Theme>;
 }
 
 type ResolvableTo<T> = T | ((utils: ThemeUtils<any>) => T);
@@ -105,4 +105,20 @@ export type RuleSet<Theme extends ThemeConfig = ThemeConfig> =
 
 export interface CSSFunction<Theme extends ThemeConfig> {
   (...interpolations: Interpolation<Theme>[]): RuleSet<Theme>;
+}
+
+export interface AtomicTokenInstance {
+  var: string;
+  name: string;
+  value: string | number;
+}
+
+export interface AtomicInstance<Theme extends ThemeConfig> {
+  token: <Path extends TokenPath<ThemeResolved<Theme>>>(
+    path: Path
+  ) => AtomicTokenInstance;
+  theme: <Path extends TokenPath<ThemeResolved<Theme>>>(path: Path) => string;
+  extendTheme: <ExtendedTheme extends ThemeConfig>(
+    callback: (utils: ThemeUtils<Theme>) => ExtendedTheme
+  ) => AtomicInstance<Theme>;
 }
