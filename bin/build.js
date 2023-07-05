@@ -4,6 +4,8 @@ const { writeFileSync } = require("fs");
 
 const [configPath] = process.argv.slice(2);
 
+console.log(process.argv);
+
 if (!configPath) throw new Error(`No configPath provided`);
 
 /** @type {import('@classes/Atomic').Atomic} */
