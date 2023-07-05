@@ -11,8 +11,11 @@ const tokens = new Atomic({
         red: "red",
       },
     },
+    blur: ({ theme }) => ({
+      md: theme(""),
+    }),
   },
-}).extendTheme(({ theme }) => ({ font: { sm: theme("spacing.md") } }));
+}).extendTheme(({ theme }) => ({ font: { sm: theme("blur.md") } }));
 
 it("Should return the correct value", () => {
   expect(tokens).toStrictEqual(tokens);
