@@ -1,13 +1,12 @@
 #! /usr/bin/env node
 
 const { writeFileSync } = require("fs");
-const path = require("path");
 
 const [configPath] = process.argv.slice(2);
 
 if (!configPath) throw new Error(`No configPath provided`);
 
-/** @type {import('@classes/DesignTokens').DesignTokens} */
+/** @type {import('@classes/Atomic').Atomic} */
 const tokens = require(configPath);
 
 Object.entries(tokens.config.exports || {}).map(([type, path]) => {
