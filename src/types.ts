@@ -17,12 +17,12 @@ export type TokenPath<T> = T extends string | number
       [K in Extract<keyof T, string>]: Dot<K, TokenPath<T[K]>>;
     }[Extract<keyof T, string>];
 
-interface ThemeFunction<Theme extends ThemeConfig> {
-  (path: TokenPath<ThemeResolved<Theme>>): string;
+interface ThemeFunction<Path extends string = string> {
+  (path: Path): string;
 }
 
 export interface ThemeUtils<Theme extends ThemeConfig> {
-  theme: ThemeFunction<Theme>;
+  theme: ThemeFunction<TokenPath<ThemeResolved<Theme>>>;
 }
 
 type ResolvableTo<T> = T | ((utils: ThemeUtils<any>) => T);
