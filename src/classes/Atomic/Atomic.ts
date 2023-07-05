@@ -26,7 +26,7 @@ export class Atomic<Theme extends ThemeConfig = ThemeConfig> {
 
   get utils(): ThemeUtils<Theme> {
     return {
-      theme: (path) => this.token(path).var,
+      theme: (path) => this.token(path)?.var,
     };
   }
 
