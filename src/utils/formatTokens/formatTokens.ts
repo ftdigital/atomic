@@ -14,6 +14,7 @@ function comment(content: string, mode: AtomicMode) {
     case "css":
       return rule(`/* ${content} */`);
     case "sass":
+    case "scss":
       return rule(`// ${content}`);
   }
 }
@@ -28,7 +29,7 @@ export function formatTokens<Theme extends ThemeConfig>(atomic: Atomic<Theme>) {
       return wrapInRoot(
         Array.from(atomic.groupedTokens)
           .map(([type, tokens]) => {
-            const rules = [comment(`${type} variables`, "css")];
+            const rules = [comment(`${type} variables`, atomic.config.mode)];
 
             tokens.forEach((token) =>
               rules.push(cssRule(token.varKey, token.value))
@@ -41,9 +42,10 @@ export function formatTokens<Theme extends ThemeConfig>(atomic: Atomic<Theme>) {
           .join("")
       );
     case "sass":
+    case "scss":
       return Array.from(atomic.groupedTokens)
         .map(([type, tokens]) => {
-          const rules = [comment(`${type} variables`, "sass")];
+          const rules = [comment(`${type} variables`, atomic.config.mode)];
 
           tokens.forEach((token) =>
             rules.push(cssRule(token.varKey, token.value))

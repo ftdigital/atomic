@@ -67,7 +67,7 @@ export type ThemeConfig = {
   [Type in keyof ThemeConfigMap]?: ResolvableTo<ThemeConfigMap[Type]>;
 };
 
-export type AtomicMode = "css" | "sass";
+export type AtomicMode = "css" | "scss" | "sass";
 
 export type StylesConfig<Theme extends ThemeConfig> = {
   [key: string]: Interpolation<Theme>[] | StylesConfig<Theme>;

@@ -25,7 +25,8 @@ export class AtomicToken<Value extends string | number = string | number> {
           var: `var(${key})`,
         };
       }
-      case "sass": {
+      case "sass":
+      case "scss": {
         const key = `$${this.name}`;
         return {
           key,
