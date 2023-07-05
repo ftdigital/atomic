@@ -2,7 +2,7 @@ import { Atomic } from "@classes/Atomic";
 
 export class AtomicToken<Value extends string | number = string | number> {
   constructor(
-    protected atomic: Atomic,
+    protected atomic: Atomic<any>,
     public path: string[],
     public value: Value
   ) {}

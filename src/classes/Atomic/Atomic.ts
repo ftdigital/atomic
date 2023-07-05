@@ -11,7 +11,7 @@ import type { AtomicToken } from "@classes/AtomicToken";
 import { createAtomicTokens, formatTokens, groupTokens } from "@utils";
 import { createAtomicStyles } from "@utils";
 
-export class Atomic<Theme extends ThemeConfig = ThemeConfig> {
+export class Atomic<Theme extends ThemeConfig> {
   stylesMap: Map<string, AtomicStyle<Theme>> = new Map();
   tokensMap: Map<string, AtomicToken> = new Map();
 
@@ -52,7 +52,7 @@ export class Atomic<Theme extends ThemeConfig = ThemeConfig> {
     return new Atomic({
       ...this.config,
       ...config,
-    });
+    } as AtomicConfig<Theme & ExtendedTheme>);
   }
 
   extendTheme<ExtendedTheme extends ThemeConfig>(

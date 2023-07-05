@@ -89,7 +89,7 @@ export interface ThemeUtilsFunction<Theme extends ThemeConfig> {
   (utils: ThemeUtils<Theme>): Interpolation<Theme>;
 }
 
-export type Interpolation<Theme extends ThemeConfig = ThemeConfig> =
+export type Interpolation<Theme extends ThemeConfig> =
   | ThemeUtilsFunction<Theme>
   | TemplateStringsArray
   | string

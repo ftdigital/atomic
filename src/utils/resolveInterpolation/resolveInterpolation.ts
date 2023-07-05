@@ -6,13 +6,13 @@ function isTemplateStringArray(a: any): a is TemplateStringsArray {
 
 function isInterpolationArray(
   a: any
-): a is readonly [TemplateStringsArray, ...Interpolation[]] {
+): a is readonly [TemplateStringsArray, ...Interpolation<any>[]] {
   return a && a[0] && isTemplateStringArray(a[0]);
 }
 
 export function resolveInterpolation(
   utils: ThemeUtils<any>,
-  interpolation: Interpolation
+  interpolation: Interpolation<any>
 ): string[] {
   if (interpolation) {
     if (isInterpolationArray(interpolation)) {
