@@ -11,7 +11,7 @@ function isInterpolationArray(
 }
 
 export function resolveInterpolation(
-  utils: ThemeUtils,
+  utils: ThemeUtils<any>,
   interpolation: Interpolation
 ): string[] {
   if (interpolation) {
