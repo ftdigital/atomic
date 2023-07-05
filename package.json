@@ -1,18 +1,18 @@
 {
-  "name": "@ftdigital/design-tokens",
-  "version": "2.0.17",
+  "name": "@ftdigital/atomic",
+  "version": "0.0.1",
   "description": "",
   "author": "FT Digital",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ftdigital/design-tokens.git"
+    "url": "git+https://github.com/ftdigital/atomic.git"
   },
   "bugs": {
-    "url": "https://github.com/ftdigital/design-tokens/issues"
+    "url": "https://github.com/ftdigital/atomic/issues"
   },
   "license": "MIT",
-  "main": "./dist/design-tokens.umd.js",
-  "module": "./dist/design-tokens.es.js",
+  "main": "./dist/atomic.umd.js",
+  "module": "./dist/atomic.es.js",
   "typings": "./dist/index.d.ts",
   "sideEffects": false,
   "private": false,
@@ -23,8 +23,8 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/design-tokens.es.js",
-      "require": "./dist/design-tokens.umd.js"
+      "import": "./dist/atomic.es.js",
+      "require": "./dist/atomic.umd.js"
     }
   },
   "scripts": {
@@ -33,15 +33,15 @@
     "test:dev": "yarn test --watch"
   },
   "bin": {
-    "design-tokens": "./bin/index.js"
+    "atomic": "./bin/index.js"
   },
   "size-limit": [
     {
-      "path": "dist/design-tokens.es.js",
+      "path": "dist/atomic.es.js",
       "limit": "10 KB"
     },
     {
-      "path": "dist/design-tokens.umd.js",
+      "path": "dist/atomic.umd.js",
       "limit": "10 KB"
     }
   ],

@@ -1,4 +1,4 @@
-import { Atomic } from "@classes/Atomic";
+import { Atomic } from "./Atomic";
 
 const tokens = new Atomic({
   mode: "css",

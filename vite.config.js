@@ -7,8 +7,8 @@ export default defineConfig({
   build: {
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),
-      name: "design-tokens",
-      fileName: (format) => `design-tokens.${format}.js`,
+      name: "atomic",
+      fileName: (format) => `atomic.${format}.js`,
     },
   },
   resolve: {

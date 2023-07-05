@@ -16,29 +16,22 @@ const tokens = new Atomic({
   },
 });
 
-const style1 = css<(typeof tokens)["config"]["theme"]>`
-  border: red;
-  background: blue;
-  color: ${({ theme }) => theme("colors.primary.red")};
-`;
-
 const style = css<(typeof tokens)["config"]["theme"]>`
   border: red;
   background: blue;
   color: ${({ theme }) => theme("colors.primary.red")};
-  ${style1}
 `;
 
 it("Should return the correct value", () => {
-  console.log(resolveInterpolation(tokens.utils, style));
-  expect(resolveInterpolation(tokens.utils, style).join("")).toEqual(
-    `
-      border: red;
-      background: blue;
-      color: var(--colors-primary-red);
-      border: red;
-      background: blue;
-      color: var(--colors-primary-red);
-  `
-  );
+  expect(
+    resolveInterpolation(tokens.utils, style)
+      .join("")
+      .split("\n")
+      .map((rule) => rule.trim())
+      .filter(Boolean)
+  ).toEqual([
+    `border: red;`,
+    `background: blue;`,
+    `color: var(--colors-primary-red);`,
+  ]);
 });

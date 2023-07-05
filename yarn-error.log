@@ -14,7 +14,7 @@ Platform:
   darwin arm64
 
 Trace: 
-  SyntaxError: /Users/freek/Repositories/FT Digital/design-tokens/package.json: Unexpected token } in JSON at position 1270
+  SyntaxError: /Users/freek/Repositories/FT Digital/atomic/package.json: Unexpected token } in JSON at position 1270
       at JSON.parse (<anonymous>)
       at /Users/freek/.nvm/versions/node/v18.15.0/lib/node_modules/yarn/lib/cli.js:1629:59
       at Generator.next (<anonymous>)
@@ -23,20 +23,20 @@ Trace:
 
 npm manifest: 
   {
-    "name": "@ftdigital/design-tokens",
+    "name": "@ftdigital/atomic",
     "version": "0.0.1",
     "description": "",
     "author": "FT Digital",
     "repository": {
       "type": "git",
-      "url": "git+https://github.com/ftdigital/design-tokens.git"
+      "url": "git+https://github.com/ftdigital/atomic.git"
     },
     "bugs": {
-      "url": "https://github.com/ftdigital/design-tokens/issues"
+      "url": "https://github.com/ftdigital/atomic/issues"
     },
     "license": "MIT",
-    "main": "./dist/design-tokens.umd.js",
-    "module": "./dist/design-tokens.es.js",
+    "main": "./dist/atomic.umd.js",
+    "module": "./dist/atomic.es.js",
     "typings": "./dist/index.d.ts",
     "sideEffects": false,
     "private": false,
@@ -46,8 +46,8 @@ npm manifest:
     ],
     "exports": {
       ".": {
-        "import": "./dist/design-tokens.es.js",
-        "require": "./dist/design-tokens.umd.js"
+        "import": "./dist/atomic.es.js",
+        "require": "./dist/atomic.umd.js"
       }
     },
     "scripts": {
@@ -56,15 +56,15 @@ npm manifest:
       "test:dev": "yarn test --watch"
     },
     "bin": {
-      "design-tokens": "./bin/index.js"
+      "atomic": "./bin/index.js"
     },
     "size-limit": [
       {
-        "path": "dist/design-tokens.es.js",
+        "path": "dist/atomic.es.js",
         "limit": "10 KB"
       },
       {
-        "path": "dist/design-tokens.umd.js",
+        "path": "dist/atomic.umd.js",
         "limit": "10 KB"
       }
     ],

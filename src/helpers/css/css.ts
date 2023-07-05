@@ -1,7 +1,7 @@
-import { Interpolation, ThemeConfig } from "@types";
+import { Interpolation, RuleSet, ThemeConfig } from "@types";
 
-export function css<Theme extends ThemeConfig = ThemeConfig>(
+export function css<Theme extends ThemeConfig>(
   ...interpolations: Interpolation<Theme>[]
-): Interpolation<ThemeConfig>[] {
+): RuleSet<Theme> {
   return interpolations;
 }

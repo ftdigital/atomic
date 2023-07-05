@@ -33,7 +33,7 @@ function buildScript(configPath) {
 const program = new Command();
 
 program
-  .name("design-tokens")
+  .name("atomic")
   .description(packagejson.description)
   .version(packagejson.version);
 
