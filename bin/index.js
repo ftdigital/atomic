@@ -45,9 +45,7 @@ program
 
     const instance = nodemon({
       script: configPath,
-      execMap: {
-        js: buildScript(configPath),
-      },
+      exec: buildScript(configPath),
       watch: [path.resolve(__dirname, configPath)],
     });
 
