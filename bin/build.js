@@ -12,13 +12,15 @@ const atomic = require(configPath);
 
 if (atomic.config.exports) {
   if (atomic.config.exports.tokens) {
-    const fileContents = prettier.format(atomic.formatTokens(), {
+    const fileContents = await prettier.format(atomic.formatTokens(), {
       parser: atomic.config.mode,
     });
     writeFileSync(atomic.config.exports.tokens, fileContents, "utf8");
   }
   if (atomic.config.exports.styles) {
-    const fileContents = prettier.format(atomic.formatStyles());
+    const fileContents = await prettier.format(atomic.formatStyles());
     writeFileSync(atomic.config.exports.styles, fileContents, "utf8");
   }
 }
+
+export {};

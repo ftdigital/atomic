@@ -9,14 +9,12 @@ const { glob } = require("glob");
 const packagejson = require("../package.json");
 const { exec } = require("child_process");
 
-const FILENAME = "atomic.config.cjs";
-
 function getConfigPath() {
-  return glob(`**/${FILENAME}`, {
+  return glob([`**/*.atomic.cjs`, `**/*.atomic.js`], {
     root: __dirname,
     ignore: "node_modules/**",
   }).then(([filePath]) => {
-    if (!filePath) throw new Error(`No config file found (${FILENAME})`);
+    if (!filePath) throw new Error(`No config file found (${filePath})`);
     return path.relative(__dirname, filePath);
   });
 }
@@ -54,11 +52,11 @@ program
         process.exit();
       })
       .on("start", function () {
-        console.log(`Atomic waiting for file changes in ${FILENAME}`);
+        console.log(`Atomic waiting for file changes`);
       })
       .on("restart", function (files) {
         files?.forEach(() => {
-          console.log(`Atomic files created from ${FILENAME}`);
+          console.log(`Atomic files created`);
         });
       });
   });
@@ -69,7 +67,7 @@ program
   .action(async () => {
     const configPath = await getConfigPath();
     exec(buildScript(configPath)).on("close", function () {
-      console.log(`Atomic files created from ${FILENAME}`);
+      console.log(`Atomic files created`);
     });
   });
 
