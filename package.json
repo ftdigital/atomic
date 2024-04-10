@@ -1,6 +1,7 @@
 {
   "name": "@ftdigital/atomic",
-  "version": "0.0.25",
+  "version": "0.0.26",
+  "type": "module",
   "description": "",
   "author": "FT Digital",
   "repository": {
@@ -13,7 +14,7 @@
   "license": "MIT",
   "main": "./dist/atomic.umd.js",
   "module": "./dist/atomic.es.js",
-  "typings": "./dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "sideEffects": false,
   "private": false,
   "files": [
@@ -27,7 +28,6 @@
       "require": "./dist/atomic.umd.js"
     }
   },
-  "types": "index.d.ts",
   "scripts": {
     "build": "vite build",
     "test": "jest",
