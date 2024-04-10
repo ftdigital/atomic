@@ -1,7 +1,6 @@
 {
   "name": "@ftdigital/atomic",
-  "version": "0.0.26",
-  "type": "module",
+  "version": "0.0.27",
   "description": "",
   "author": "FT Digital",
   "repository": {
@@ -25,6 +24,7 @@
   "exports": {
     ".": {
       "import": "./dist/atomic.es.js",
+      "types": "./dist/index.d.ts",
       "require": "./dist/atomic.umd.js"
     }
   },
