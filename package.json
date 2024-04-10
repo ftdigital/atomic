@@ -1,6 +1,6 @@
 {
   "name": "@ftdigital/atomic",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "description": "",
   "author": "FT Digital",
   "repository": {
@@ -27,6 +27,7 @@
       "require": "./dist/atomic.umd.js"
     }
   },
+  "types": "index.d.ts",
   "scripts": {
     "build": "vite build",
     "test": "jest",
