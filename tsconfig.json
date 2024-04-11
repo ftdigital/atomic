@@ -33,6 +33,6 @@
       "@types": ["./types"]
     }
   },
-  "include": ["src", "**/*.js"],
+  "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }
