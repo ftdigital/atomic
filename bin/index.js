@@ -10,7 +10,7 @@ const packagejson = require("../package.json");
 const { exec } = require("child_process");
 
 function getConfigPath() {
-  return glob([`**/*.atomic.cjs`, `**/*.atomic.js`], {
+  return glob("**/*.atomic.{cjs,js}", {
     root: __dirname,
     ignore: "node_modules/**",
   }).then(([filePath]) => {
