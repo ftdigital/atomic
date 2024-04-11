@@ -1,5 +1,6 @@
-import type { Atomic } from "@classes/Atomic";
-import { AtomicMode, ThemeConfig } from "@types";
+import { AtomicTokens } from "@classes/AtomicTokens";
+import { AtomicMode } from "@types";
+import { formatTokenVar } from "@utils";
 
 function rule(content: string = "") {
   return `${content}\n`;
@@ -19,36 +20,25 @@ function comment(content: string, mode: AtomicMode) {
   }
 }
 
-function wrapInRoot(cssVarsString: string) {
-  return [rule(":root {"), cssVarsString, rule("}")].join("");
+function wrapInSelector(selector: string, cssVarsString: string) {
+  return [rule(`${selector} {`), cssVarsString, rule("}")].join("");
 }
 
-export function formatTokens<Theme extends ThemeConfig>(atomic: Atomic<Theme>) {
-  switch (atomic.config.mode) {
-    case "css":
-      return wrapInRoot(
-        Array.from(atomic.groupedTokens)
-          .map(([type, tokens]) => {
-            const rules = [comment(`${type} variables`, atomic.config.mode)];
+function wrapInRoot(cssVarsString: string) {
+  return wrapInSelector(":root", cssVarsString);
+}
 
-            tokens.forEach((token) =>
-              rules.push(cssRule(token.varKey, token.value))
-            );
+function formatAtomicTokens(tokens: AtomicTokens, mode: AtomicMode) {
+  const groupedTokens = tokens.group();
 
-            rules.push(rule());
-
-            return rules.join("");
-          })
-          .join("")
-      );
-    case "sass":
-    case "scss":
-      return Array.from(atomic.groupedTokens)
+  switch (mode) {
+    case "css": {
+      const contents = Array.from(groupedTokens)
         .map(([type, tokens]) => {
-          const rules = [comment(`${type} variables`, atomic.config.mode)];
+          const rules = [comment(`${type} variables`, mode)];
 
-          tokens.forEach((token) =>
-            rules.push(cssRule(token.varKey, token.value))
+          tokens.forEach(([path, value]) =>
+            rules.push(cssRule(formatTokenVar(path, mode).key, value))
           );
 
           rules.push(rule());
@@ -56,7 +46,54 @@ export function formatTokens<Theme extends ThemeConfig>(atomic: Atomic<Theme>) {
           return rules.join("");
         })
         .join("");
+
+      if (tokens.meta.selector) {
+        return wrapInSelector(tokens.meta.selector, contents);
+      }
+
+      return contents;
+    }
+    case "sass":
+    case "scss": {
+      const contents = Array.from(groupedTokens)
+        .map(([type, tokens]) => {
+          const rules = [comment(`${type} variables`, mode)];
+
+          tokens.forEach(([path, value]) =>
+            rules.push(cssRule(formatTokenVar(path, mode).key, value))
+          );
+
+          rules.push(rule());
+
+          return rules.join("");
+        })
+        .join("");
+
+      if (tokens.meta.selector) {
+        return wrapInSelector(tokens.meta.selector, contents);
+      }
+
+      return contents;
+    }
     default:
-      throw new Error(`No formatting found for type ${atomic.config.mode}`);
+      throw new Error(`No formatting found for type ${mode}`);
+  }
+}
+
+export function formatTokens(tokensArray: AtomicTokens[], mode: AtomicMode) {
+  const contents = tokensArray
+    .map((tokens) => formatAtomicTokens(tokens, mode))
+    .join("");
+
+  switch (mode) {
+    case "css": {
+      return wrapInRoot(contents);
+    }
+    case "sass":
+    case "scss": {
+      return contents;
+    }
+    default:
+      throw new Error(`No formatting found for type ${mode}`);
   }
 }

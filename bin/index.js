@@ -37,7 +37,7 @@ program
 
 program
   .command("dev")
-  .description("Create css files from Atomic config")
+  .description("Create files from Atomic config")
   .action(async () => {
     const configPath = await getConfigPath();
 
@@ -63,7 +63,7 @@ program
 
 program
   .command("build")
-  .description("Create css files from atomic config")
+  .description("Create files from Atomic config")
   .action(async () => {
     const configPath = await getConfigPath();
     exec(buildScript(configPath)).on("close", function () {

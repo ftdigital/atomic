@@ -1,39 +1,18 @@
-import { Dot } from "./types.utils";
+import { AtomicTokens } from "@classes/AtomicTokens";
+import type { Dot } from "./types.utils";
 
-type KeyValuePair<
-  Value extends string | number = string | number,
-  Key extends string = string
-> = Record<Key, Value>;
+type KeyValuePair<Value extends string | number = string | number> = Record<
+  string,
+  Value
+>;
 
 interface RecursiveKeyValuePair<
-  Value extends string | number = string | number
+  Value extends string | number = string | number,
 > {
   [key: string]: Value | RecursiveKeyValuePair<Value>;
 }
 
-export type TokenPath<T> = T extends string | number
-  ? ""
-  : {
-      [K in Extract<keyof T, string>]: Dot<K, TokenPath<T[K]>>;
-    }[Extract<keyof T, string>];
-
-export type ThemeUtils<Theme extends ThemeConfig> = Pick<
-  AtomicInstance<Theme>,
-  "theme"
->;
-
-type ResolvableTo<T> = T | ((utils: ThemeUtils<any>) => T);
-
-type InferResolvableTo<T> = T extends ResolvableTo<infer A> ? A : never;
-
-type InferKeyValueValue<T extends KeyValuePair | RecursiveKeyValuePair> =
-  T extends KeyValuePair<infer Value>
-    ? Value
-    : T extends RecursiveKeyValuePair<infer Value>
-    ? Value
-    : never;
-
-interface ThemeConfigMap {
+interface TokensConfigMap {
   screens: KeyValuePair;
   mediaQueries: KeyValuePair<string>;
 
@@ -54,68 +33,48 @@ interface ThemeConfigMap {
   blur: KeyValuePair;
 }
 
-export type ThemeConfigValueMap = {
-  [Type in keyof ThemeConfigMap]: InferKeyValueValue<ThemeConfigMap[Type]>;
+export type TokenPath<T> = T extends string | number
+  ? ""
+  : {
+      [K in Extract<keyof T, string>]: Dot<K, TokenPath<T[K]>>;
+    }[Extract<keyof T, string>];
+
+export interface TokenUtils<TConfig extends TokensConfig> {
+  token: (path: TokenPath<TokensConfigResolved<TConfig>>) => string;
+}
+
+type ResolvableTo<T> = T | ((utils: TokenUtils<TokensConfig>) => T);
+
+type InferResolvableTo<T> = T extends ResolvableTo<infer A> ? A : never;
+
+export type TokensConfig = {
+  [Type in keyof TokensConfigMap]?: ResolvableTo<TokensConfigMap[Type]>;
 };
 
-export type ThemeConfig = {
-  [Type in keyof ThemeConfigMap]?: ResolvableTo<ThemeConfigMap[Type]>;
+type TokensConfigResolved<TConfig extends TokensConfig> = {
+  [Type in keyof TConfig]: InferResolvableTo<TConfig[Type]>;
 };
 
 export type AtomicMode = "css" | "scss" | "sass";
 
-export type StylesConfig<Theme extends ThemeConfig> = {
-  [key: string]: Interpolation<Theme>[] | StylesConfig<Theme>;
-};
-
-export interface AtomicConfig<Theme extends ThemeConfig> {
+export interface AtomicConfig<TConfig extends TokensConfig> {
+  tokens: TConfig;
   mode: AtomicMode;
-  exports?: {
-    tokens?: string;
-    styles?: string;
-  };
-  theme: Theme;
-  styles?: StylesConfig<Theme>;
+  target: string;
+  variants?: {
+    selector: string;
+    tokens: Partial<TConfig>;
+    description?: string;
+  }[];
 }
 
-export type ThemeResolved<Theme extends ThemeConfig> = {
-  [Type in keyof Theme]: InferResolvableTo<Theme[Type]>;
-};
-
-export interface ThemeUtilsFunction<Theme extends ThemeConfig> {
-  (utils: ThemeUtils<Theme>): Interpolation<Theme>;
+export interface AtomicTokensMeta {
+  description?: string;
+  selector?: string;
 }
 
-export type Interpolation<Theme extends ThemeConfig> =
-  | ThemeUtilsFunction<Theme>
-  | TemplateStringsArray
-  | string
-  | number
-  | false
-  | undefined
-  | null
-  | RuleSet<object>
-  | Interpolation<Theme>[];
-
-export type RuleSet<Theme extends ThemeConfig = ThemeConfig> =
-  Interpolation<Theme>[];
-
-export interface CSSFunction<Theme extends ThemeConfig> {
-  (...interpolations: Interpolation<Theme>[]): RuleSet<Theme>;
-}
-
-export interface AtomicTokenInstance {
-  var: string;
-  name: string;
-  value: string | number;
-}
-
-export interface AtomicInstance<Theme extends ThemeConfig> {
-  token: <Path extends TokenPath<ThemeResolved<Theme>>>(
-    path: Path
-  ) => AtomicTokenInstance;
-  theme: (path: TokenPath<ThemeResolved<Theme>>) => string;
-  extendTheme: <ExtendedTheme extends ThemeConfig>(
-    callback: (utils: ThemeUtils<Theme>) => ExtendedTheme
-  ) => AtomicInstance<Theme>;
+export interface Atomic<TConfig extends TokensConfig> {
+  config: AtomicConfig<TConfig>;
+  format: () => string;
+  var: (path: TokenPath<TokensConfigResolved<TConfig>>) => string;
 }
