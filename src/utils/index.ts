@@ -1,4 +1,5 @@
 export * from "./FindByPath";
 export * from "./formatTokenVar";
 export * from "./formatTokens";
-export * from "./flattenTokens";
+export * from "./processTokens";
+export * from "./groupTokens";

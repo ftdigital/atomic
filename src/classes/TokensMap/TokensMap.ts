@@ -1,17 +1,11 @@
-import { AtomicTokensMeta, TokenUtils, TokensConfig } from "@types";
-import { flattenTokens } from "@utils";
+import { AtomicTokensMeta } from "@types";
 
-export class AtomicTokens<
-  TConfig extends TokensConfig = TokensConfig,
-> extends Map<string, string | number> {
+export class TokensMap extends Map<string, string | number> {
   constructor(
-    tokens: TConfig,
-    utils: TokenUtils<TConfig>,
+    tokens?: Map<string, string | number>,
     public meta: AtomicTokensMeta = {}
   ) {
-    const flattenedTokens = flattenTokens(tokens, utils);
-
-    super(flattenedTokens);
+    super(tokens);
   }
 
   group() {

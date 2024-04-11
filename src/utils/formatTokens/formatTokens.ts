@@ -1,4 +1,4 @@
-import { AtomicTokens } from "@classes/AtomicTokens";
+import { TokensMap } from "@classes/TokensMap";
 import { AtomicMode } from "@types";
 import { formatTokenVar } from "@utils";
 
@@ -28,7 +28,7 @@ function wrapInRoot(cssVarsString: string) {
   return wrapInSelector(":root", cssVarsString);
 }
 
-function formatAtomicTokens(tokens: AtomicTokens, mode: AtomicMode) {
+function formatAtomicTokens(tokens: TokensMap, mode: AtomicMode) {
   const groupedTokens = tokens.group();
 
   switch (mode) {
@@ -80,7 +80,7 @@ function formatAtomicTokens(tokens: AtomicTokens, mode: AtomicMode) {
   }
 }
 
-export function formatTokens(tokensArray: AtomicTokens[], mode: AtomicMode) {
+export function formatTokens(tokensArray: TokensMap[], mode: AtomicMode) {
   const contents = tokensArray
     .map((tokens) => formatAtomicTokens(tokens, mode))
     .join("");

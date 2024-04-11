@@ -1,37 +1,4 @@
-import { AtomicTokens } from "@classes/AtomicTokens";
 import type { Dot } from "./types.utils";
-
-type KeyValuePair<Value extends string | number = string | number> = Record<
-  string,
-  Value
->;
-
-interface RecursiveKeyValuePair<
-  Value extends string | number = string | number,
-> {
-  [key: string]: Value | RecursiveKeyValuePair<Value>;
-}
-
-interface TokensConfigMap {
-  screens: KeyValuePair;
-  mediaQueries: KeyValuePair<string>;
-
-  spacing: KeyValuePair;
-  colors: RecursiveKeyValuePair<string>;
-  zIndex: KeyValuePair;
-
-  transitionDuration: KeyValuePair<string>;
-  transition: KeyValuePair<string>;
-
-  fontFamily: KeyValuePair<string>;
-  fontSize: KeyValuePair;
-  fontWeight: KeyValuePair<string>;
-  font: KeyValuePair<string>;
-
-  borderRadius: KeyValuePair;
-  boxShadow: KeyValuePair;
-  blur: KeyValuePair;
-}
 
 export type TokenPath<T> = T extends string | number
   ? ""
@@ -39,33 +6,71 @@ export type TokenPath<T> = T extends string | number
       [K in Extract<keyof T, string>]: Dot<K, TokenPath<T[K]>>;
     }[Extract<keyof T, string>];
 
-export interface TokenUtils<TConfig extends TokensConfig> {
-  token: (path: TokenPath<TokensConfigResolved<TConfig>>) => string;
+type KeyValuePair<Value extends string | number> = Record<string, Value>;
+
+interface RecursiveKeyValuePair<Value extends string | number> {
+  [key: string]: Value | RecursiveKeyValuePair<Value>;
+}
+export interface TokensConfigMap {
+  screens: KeyValuePair<string | number>;
+  mediaQueries: KeyValuePair<string>;
+
+  spacing: KeyValuePair<string | number>;
+  colors: RecursiveKeyValuePair<string>;
+  zIndex: KeyValuePair<string | number>;
+
+  transitionDuration: KeyValuePair<string>;
+  transition: KeyValuePair<string>;
+
+  fontFamily: KeyValuePair<string>;
+  fontSize: KeyValuePair<string | number>;
+  fontWeight: KeyValuePair<string>;
+  font: KeyValuePair<string>;
+
+  borderRadius: KeyValuePair<string | number>;
+  boxShadow: KeyValuePair<string | number>;
+  blur: KeyValuePair<string | number>;
 }
 
-type ResolvableTo<T> = T | ((utils: TokenUtils<TokensConfig>) => T);
+type WithVariants<Variants extends string, T> = T extends string | number
+  ? T | ({ default: T } & Partial<Record<Variants, T>>)
+  : {
+      [K in Extract<keyof T, string>]: WithVariants<Variants, T[K]>;
+    };
 
-type InferResolvableTo<T> = T extends ResolvableTo<infer A> ? A : never;
-
-export type TokensConfig = {
-  [Type in keyof TokensConfigMap]?: ResolvableTo<TokensConfigMap[Type]>;
+export type TokensConfig<Variants extends string = string> = {
+  [Type in keyof TokensConfigMap]?: WithVariants<
+    Variants,
+    TokensConfigMap[Type]
+  >;
 };
 
-type TokensConfigResolved<TConfig extends TokensConfig> = {
-  [Type in keyof TConfig]: InferResolvableTo<TConfig[Type]>;
+type InferResolvableTo<Variants extends string, T> =
+  T extends WithVariants<Variants, infer A> ? A : never;
+
+export type TokensConfigResolved<
+  Variants extends string,
+  TConfig extends TokensConfig,
+> = {
+  [Type in keyof TConfig]: InferResolvableTo<Variants, TConfig[Type]>;
 };
 
 export type AtomicMode = "css" | "scss" | "sass";
 
-export interface AtomicConfig<TConfig extends TokensConfig> {
+export interface AtomicConfig<
+  Variants extends string,
+  TConfig extends TokensConfig<Variants>,
+> {
   tokens: TConfig;
   mode: AtomicMode;
   target: string;
-  variants?: {
-    selector: string;
-    tokens: Partial<TConfig>;
-    description?: string;
-  }[];
+  variants?: Record<
+    Variants,
+    {
+      selector: string;
+      description?: string;
+    }
+  >;
 }
 
 export interface AtomicTokensMeta {
@@ -73,8 +78,11 @@ export interface AtomicTokensMeta {
   selector?: string;
 }
 
-export interface Atomic<TConfig extends TokensConfig> {
-  config: AtomicConfig<TConfig>;
+export interface Atomic<
+  Variants extends string = never,
+  TConfig extends TokensConfig<Variants> = TokensConfig<Variants>,
+> {
+  config: AtomicConfig<Variants, TConfig>;
   format: () => string;
-  var: (path: TokenPath<TokensConfigResolved<TConfig>>) => string;
+  var: (path: TokenPath<TokensConfigResolved<Variants, TConfig>>) => string;
 }
