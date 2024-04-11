@@ -10,10 +10,12 @@ const packagejson = require("../package.json");
 const { exec } = require("child_process");
 
 async function getConfigPath() {
-  const [filePath] = await glob("**/*.atomic.{cjs,js}", {
+  const results = await glob("*.atomic.{cjs,js}", {
     root: __dirname,
     ignore: "node_modules/**",
   });
+
+  console.log({ results });
 
   if (!filePath) throw new Error(`No config file found (${filePath})`);
 
