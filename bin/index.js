@@ -9,14 +9,15 @@ const { glob } = require("glob");
 const packagejson = require("../package.json");
 const { exec } = require("child_process");
 
-function getConfigPath() {
-  return glob("**/*.atomic.{cjs,js}", {
+async function getConfigPath() {
+  const [filePath] = await glob("**/*.atomic.{cjs,js}", {
     root: __dirname,
     ignore: "node_modules/**",
-  }).then(([filePath]) => {
-    if (!filePath) throw new Error(`No config file found (${filePath})`);
-    return path.relative(__dirname, filePath);
   });
+
+  if (!filePath) throw new Error(`No config file found (${filePath})`);
+
+  return path.relative(__dirname, filePath);
 }
 
 /**
