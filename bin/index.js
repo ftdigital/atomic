@@ -3,7 +3,7 @@
 const { Command } = require("commander");
 const nodemon = require("nodemon");
 const path = require("path");
-const { glob } = require("glob");
+const { globSync } = require("glob");
 
 // @ts-ignore
 const packagejson = require("../package.json");
@@ -16,6 +16,8 @@ async function getConfigPath() {
   });
 
   console.log({ results });
+
+  const [filePath] = results;
 
   if (!filePath) throw new Error(`No config file found (${filePath})`);
 
