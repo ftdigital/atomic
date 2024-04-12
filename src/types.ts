@@ -1,17 +1,16 @@
-import type { Dot } from "./types.utils";
+import { DottedPath } from "types.utils";
 
-export type TokenPath<T> = T extends string | number
-  ? ""
-  : {
-      [K in Extract<keyof T, string>]: Dot<K, TokenPath<T[K]>>;
-    }[Extract<keyof T, string>];
+type TokenPath<T extends Record<string, unknown>> = DottedPath<
+  T,
+  string | number
+>;
 
 type KeyValuePair<Value extends string | number> = Record<string, Value>;
 
 interface RecursiveKeyValuePair<Value extends string | number> {
   [key: string]: Value | RecursiveKeyValuePair<Value>;
 }
-export interface TokensConfigMap {
+interface TokensObject {
   screens: KeyValuePair<string | number>;
   mediaQueries: KeyValuePair<string>;
 
@@ -32,45 +31,52 @@ export interface TokensConfigMap {
   blur: KeyValuePair<string | number>;
 }
 
-type WithVariants<Variants extends string, T> = T extends string | number
-  ? T | ({ default: T } & Partial<Record<Variants, T>>)
-  : {
-      [K in Extract<keyof T, string>]: WithVariants<Variants, T[K]>;
-    };
-
-export type TokensConfig<Variants extends string = string> = {
-  [Type in keyof TokensConfigMap]?: WithVariants<
-    Variants,
-    TokensConfigMap[Type]
+export type TokensConfig<Variant extends string> = {
+  [K in keyof TokensObject]?: WithTokenUtils<
+    WithVariants<TokensObject[K], Variant>
   >;
 };
 
-type InferResolvableTo<Variants extends string, T> =
-  T extends WithVariants<Variants, infer A> ? A : never;
+type WithVariants<T, Variant extends string> = T extends string | number
+  ? T | ({ default: T } & Partial<Record<Variant, T>>)
+  : { [K in keyof T]: WithVariants<T[K], Variant> };
 
-export type TokensConfigResolved<
-  Variants extends string,
-  TConfig extends TokensConfig,
-> = {
-  [Type in keyof TConfig]: InferResolvableTo<Variants, TConfig[Type]>;
-};
+export interface TokenUtils {
+  get: (path: string) => string;
+}
+
+type WithTokenUtils<T> =
+  | T
+  | ((utils: TokenUtils) => T)
+  | { [K in keyof T]: WithTokenUtils<T[K]> };
+
+type InferResolvableTo<T, Variants extends string> = T extends {
+  default: infer A;
+}
+  ? A
+  : T extends (utils: any) => infer A
+    ? A
+    : { [K in keyof T]: InferResolvableTo<T[K], Variants> };
+
+export type ResolvedTokensConfig<
+  Variant extends string,
+  TConfig extends TokensConfig<Variant>,
+> = InferResolvableTo<TConfig, Variant>;
 
 export type AtomicMode = "css" | "scss" | "sass";
 
+export interface VariantConfig {
+  selector: string;
+  description?: string;
+}
 export interface AtomicConfig<
-  Variants extends string,
-  TConfig extends TokensConfig<Variants>,
+  Variant extends string,
+  TConfig extends TokensConfig<Variant>,
 > {
   tokens: TConfig;
   mode: AtomicMode;
   target: string;
-  variants?: Record<
-    Variants,
-    {
-      selector: string;
-      description?: string;
-    }
-  >;
+  variants?: Record<Variant, VariantConfig>;
 }
 
 export interface AtomicTokensMeta {
@@ -79,10 +85,10 @@ export interface AtomicTokensMeta {
 }
 
 export interface Atomic<
-  Variants extends string = never,
-  TConfig extends TokensConfig<Variants> = TokensConfig<Variants>,
+  Variant extends string,
+  TConfig extends TokensConfig<Variant>,
 > {
-  config: AtomicConfig<Variants, TConfig>;
+  config: AtomicConfig<Variant, TConfig>;
   format: () => string;
-  var: (path: TokenPath<TokensConfigResolved<Variants, TConfig>>) => string;
+  get: (path: TokenPath<ResolvedTokensConfig<Variant, TConfig>>) => string;
 }

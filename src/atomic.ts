@@ -1,16 +1,29 @@
-import { Atomic, AtomicConfig, TokensConfig } from "@types";
+import { TokensMap } from "@classes/TokensMap";
+import { Atomic, AtomicConfig, TokenUtils, TokensConfig } from "@types";
 import { processTokens, formatTokenVar, formatTokens } from "@utils";
 
 export function atomic<
-  Variants extends string,
-  TConfig extends TokensConfig<Variants>,
->(config: AtomicConfig<Variants, TConfig>): Atomic<Variants, TConfig> {
-  const tokens = processTokens(config.tokens, config.variants);
+  Variant extends string,
+  TConfig extends TokensConfig<Variant>,
+>(config: AtomicConfig<Variant, TConfig>): Atomic<Variant, TConfig> {
+  const tokens = Object.fromEntries(
+    ["default", ...Object.keys(config.variants ?? {})].map((variant) => [
+      variant,
+      new TokensMap(),
+    ])
+  ) as Record<"default" | Variant, TokensMap>;
+
+  const utils: TokenUtils = {
+    get: (path) => formatTokenVar(path, config.mode).var,
+  };
+
+  processTokens(tokens, config.tokens, config.variants!, utils);
+
   const tokensArray = Object.values(tokens);
 
   return {
     config,
     format: () => formatTokens(tokensArray, config.mode),
-    var: (path) => formatTokenVar(path, config.mode).var,
+    get: (path) => formatTokenVar(path, config.mode).var,
   };
 }

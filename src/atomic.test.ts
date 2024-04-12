@@ -1,23 +1,25 @@
 import { atomic } from "./atomic";
 
-const tokens = atomic({
+const { get } = atomic({
   mode: "css",
   target: "./",
   variants: {
     dark: { selector: ".dark-mode" },
   },
   tokens: {
-    spacing: {
-      md: { default: 10, dark: 20 },
-    },
+    blur: ({ get }) => ({
+      small: get(""),
+    }),
     colors: {
       primary: {
-        red: "red",
+        red: { default: "red" },
       },
     },
   },
 });
 
+get("blur.small");
+
 it("Should return the correct value", () => {
-  expect(tokens).toStrictEqual(tokens);
+  expect("tokens").toStrictEqual("tokens");
 });
