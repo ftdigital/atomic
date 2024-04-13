@@ -1,6 +1,6 @@
 import { atomic } from "./atomic";
 
-const { get } = atomic({
+atomic({
   mode: "css",
   target: "./",
   variants: {
@@ -8,7 +8,7 @@ const { get } = atomic({
   },
   tokens: {
     blur: ({ get }) => ({
-      small: get(""),
+      small: get("colors.primary.red"),
     }),
     colors: {
       primary: {
@@ -17,8 +17,6 @@ const { get } = atomic({
     },
   },
 });
-
-get("blur.small");
 
 it("Should return the correct value", () => {
   expect("tokens").toStrictEqual("tokens");

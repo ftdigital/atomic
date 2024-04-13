@@ -2,16 +2,14 @@
 
 const { writeFileSync } = require("fs");
 
-const [configPath] = process.argv.slice(2);
+const configPaths = process.argv.slice(2);
 
-if (!configPath) throw new Error(`No configPath provided`);
+configPaths.forEach((configPath) => {
+  /** @type {import('@types').Atomic<any, any>} */
+  const atomic = require(configPath);
 
-/** @type {import('@types').Atomic<any, any>} */
-const atomic = require(configPath);
-
-if (atomic.config.target) {
-  const fileContents = atomic.format();
-  writeFileSync(atomic.config.target, fileContents, "utf8");
-}
-
-export {};
+  if (atomic.config.target) {
+    const fileContents = atomic.format();
+    writeFileSync(atomic.config.target, fileContents, "utf8");
+  }
+});

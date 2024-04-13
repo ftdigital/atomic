@@ -1,9 +1,11 @@
 import { AtomicMode } from "@types";
 
 export function formatTokenVar(path: string, mode: AtomicMode) {
+  const formattedPath = path.split(".").join("-");
+
   switch (mode) {
     case "css": {
-      const key = `--${path}`;
+      const key = `--${formattedPath}`;
       return {
         key,
         var: `var(${key})`,
@@ -11,7 +13,7 @@ export function formatTokenVar(path: string, mode: AtomicMode) {
     }
     case "sass":
     case "scss": {
-      const key = `$${path}`;
+      const key = `$${formattedPath}`;
       return {
         key,
         var: key,

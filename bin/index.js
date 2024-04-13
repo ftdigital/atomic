@@ -3,34 +3,30 @@
 const { Command } = require("commander");
 const nodemon = require("nodemon");
 const path = require("path");
-const { globSync } = require("glob");
+const { glob } = require("glob");
 
 // @ts-ignore
 const packagejson = require("../package.json");
 const { exec } = require("child_process");
 
-async function getConfigPath() {
-  const results = await glob("*.atomic.{cjs,js}", {
+async function getConfigPaths() {
+  const filePaths = await glob("**/*.atomic.{cjs,js}", {
     root: __dirname,
     ignore: "node_modules/**",
   });
 
-  console.log({ results });
+  if (filePaths.length < 1) throw new Error("No config file found");
 
-  const [filePath] = results;
-
-  if (!filePath) throw new Error(`No config file found (${filePath})`);
-
-  return path.relative(__dirname, filePath);
+  return filePaths.map((filePath) => path.relative(__dirname, filePath));
 }
 
 /**
- * @param {string} [configPath]
+ * @param {string[]} [configPaths]
  */
-function buildScript(configPath) {
+function buildScript(configPaths) {
   return `node ${JSON.stringify(
     path.resolve(__dirname, "./build.js")
-  )} ${JSON.stringify(configPath)}`;
+  )} ${configPaths.map((configPath) => JSON.stringify(configPath)).join(" ")}`;
 }
 
 const program = new Command();
@@ -44,12 +40,14 @@ program
   .command("dev")
   .description("Create files from Atomic config")
   .action(async () => {
-    const configPath = await getConfigPath();
+    const configPaths = await getConfigPaths();
 
     const instance = nodemon({
-      script: configPath,
-      exec: buildScript(configPath),
-      watch: [path.resolve(__dirname, configPath)],
+      // script: configPath,
+      exec: buildScript(configPaths),
+      watch: configPaths.map((configPath) =>
+        path.resolve(__dirname, configPath)
+      ),
     });
 
     instance
@@ -70,8 +68,9 @@ program
   .command("build")
   .description("Create files from Atomic config")
   .action(async () => {
-    const configPath = await getConfigPath();
-    exec(buildScript(configPath)).on("close", function () {
+    const configPaths = await getConfigPaths();
+
+    exec(buildScript(configPaths)).on("close", function () {
       console.log(`Atomic files created`);
     });
   });
