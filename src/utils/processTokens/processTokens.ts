@@ -11,9 +11,7 @@ function isVariantObject(
   string,
   string | number | ((utils: TokenUtils) => string | number)
 > {
-  return (
-    typeof value === "object" && "default" in value && isValue(value["default"])
-  );
+  return typeof value === "object" && "default" in value;
 }
 
 export function processTokens(
