@@ -5,7 +5,12 @@ function isValue(value: any): value is string | number {
   return typeof value === "number" || typeof value === "string";
 }
 
-function isVariantObject(value: any): value is Record<string, string | number> {
+function isVariantObject(
+  value: any
+): value is Record<
+  string,
+  string | number | ((utils: TokenUtils) => string | number)
+> {
   return (
     typeof value === "object" && "default" in value && isValue(value["default"])
   );
@@ -35,7 +40,10 @@ export function processTokens(
               selector,
             });
           }
-          tokens[variant]!.set(resolvedPath, value);
+          tokens[variant]!.set(
+            resolvedPath,
+            typeof value === "function" ? value(utils) : value
+          );
         });
       } else if (isValue(resolvedValue)) {
         tokens?.["default"]?.set(resolvedPath, resolvedValue);
