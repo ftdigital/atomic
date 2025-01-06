@@ -62,10 +62,9 @@ program
           console.log(`Atomic files created`);
         });
       })
-      .on("crash"),
-      function () {
+      .on("crash", function () {
         console.log(`Error while creating atomic files`);
-      };
+      });
   });
 
 program
