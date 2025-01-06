@@ -1,55 +1,31 @@
 import { TokensMap } from "@classes/TokensMap";
-import type { AtomicTokensMeta, TokenUtils, TokensConfig } from "@types";
+import type { TokenUtils, TokensConfig } from "@types";
 
 function isValue(value: any): value is string | number {
   return typeof value === "number" || typeof value === "string";
 }
 
-function isVariantObject(
-  value: any
-): value is Record<
-  string,
-  string | number | ((utils: TokenUtils) => string | number)
-> {
-  return typeof value === "object" && "default" in value;
-}
-
 export function processTokens(
-  tokens: Record<"default" | string, TokensMap>,
-  tokensConfig: TokensConfig<any>,
-  variants: Record<string, AtomicTokensMeta>,
+  tokensConfig: TokensConfig,
   utils: TokenUtils
-): void {
-  function loop(obj: Record<string, unknown>, _path: string[] = []) {
+): TokensMap {
+  const tokens = new TokensMap();
+  function loop(obj: Record<string, unknown>, path: string[] = []) {
     for (const key in obj) {
-      const path = [..._path, key];
-      const resolvedPath = path.join(".");
-
+      const resolvedPath = key === "default" ? path : [...path, key];
+      const stringifiedPath = resolvedPath.join(".");
       const value = obj[key as keyof typeof obj];
-
       const resolvedValue = typeof value === "function" ? value(utils) : value;
 
-      if (isVariantObject(resolvedValue)) {
-        Object.entries(resolvedValue).map(([variant, value]) => {
-          if (!(variant in tokens)) {
-            const { description, selector } = variants?.[variant] ?? {};
-            tokens[variant] = new TokensMap(undefined, {
-              description,
-              selector,
-            });
-          }
-          tokens[variant]!.set(
-            resolvedPath,
-            typeof value === "function" ? value(utils) : value
-          );
-        });
-      } else if (isValue(resolvedValue)) {
-        tokens?.["default"]?.set(resolvedPath, resolvedValue);
+      if (isValue(resolvedValue)) {
+        tokens.set(stringifiedPath, resolvedValue);
       } else {
-        loop(resolvedValue, path);
+        loop(resolvedValue, resolvedPath);
       }
     }
   }
 
   loop(tokensConfig as Record<string, unknown>);
+
+  return tokens;
 }

@@ -61,7 +61,11 @@ program
         files?.forEach(() => {
           console.log(`Atomic files created`);
         });
-      });
+      })
+      .on("crash"),
+      function () {
+        console.log(`Error while creating atomic files`);
+      };
   });
 
 program
@@ -70,9 +74,13 @@ program
   .action(async () => {
     const configPaths = await getConfigPaths();
 
-    exec(buildScript(configPaths)).on("close", function () {
-      console.log(`Atomic files created`);
-    });
+    exec(buildScript(configPaths))
+      .on("close", function () {
+        console.log(`Atomic files created`);
+      })
+      .on("error", function () {
+        console.log(`Error while creating atomic files`);
+      });
   });
 
 program.parse(process.argv);

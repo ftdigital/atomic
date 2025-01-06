@@ -80,8 +80,8 @@ function formatAtomicTokens(tokens: TokensMap, mode: AtomicMode) {
   }
 }
 
-export function formatTokens(tokensArray: TokensMap[], mode: AtomicMode) {
-  const contents = tokensArray
+export function formatTokens(tokensMaps: TokensMap[], mode: AtomicMode) {
+  const contents = tokensMaps
     .map((tokens) => formatAtomicTokens(tokens, mode))
     .join("");
 
