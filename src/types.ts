@@ -75,6 +75,11 @@ export interface AtomicTokensMeta {
   selector?: string;
 }
 
+export interface TokenSet {
+  entries: Map<string, string | number>;
+  meta: AtomicTokensMeta;
+}
+
 export interface Atomic<TConfig extends TokensConfig> {
   config: AtomicConfig<TConfig>;
   format: () => string;
