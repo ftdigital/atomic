@@ -10,6 +10,9 @@ export default defineConfig({
       name: "atomic",
       fileName: (format) => `atomic.${format}.js`,
     },
+    rollupOptions: {
+      external: ['fs'],
+    },
   },
   resolve: {
     alias: {
