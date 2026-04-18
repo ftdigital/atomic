@@ -12,12 +12,13 @@ export default defineConfig({
     },
     rollupOptions: {
       external: ['fs'],
+      output: {
+        globals: { fs: 'fs' },
+      },
     },
   },
   resolve: {
     alias: {
-      "@classes": path.resolve(__dirname, "./src/classes"),
-      "@helpers": path.resolve(__dirname, "./src/helpers"),
       "@utils": path.resolve(__dirname, "./src/utils"),
       "@types": path.resolve(__dirname, "./src/types"),
     },

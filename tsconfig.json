@@ -27,8 +27,6 @@
     "skipLibCheck": true,
     "baseUrl": "./src",
     "paths": {
-      "@classes/*": ["./classes/*"],
-      "@helpers/*": ["./helpers/*"],
       "@utils": ["./utils"],
       "@types": ["./types"]
     }

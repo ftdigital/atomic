@@ -1,4 +1,4 @@
-import { writeFileSync } from "fs";
+import * as fs from "fs";
 import { atomic } from "./atomic";
 
 function generateTokens() {
@@ -161,7 +161,7 @@ it("Should return the correct value", () => {
   });
 
   const fileContents = atomic.format();
-  writeFileSync(atomic.config.target, fileContents, "utf8");
+  fs.writeFileSync(atomic.config.target, fileContents, "utf8");
 
   expect("tokens").toStrictEqual("tokens");
 });
@@ -207,7 +207,7 @@ it('extend() deep merges nested tokens', () => {
 })
 
 it('write() writes formatted output to config.target', () => {
-  const mockWrite = jest.spyOn(require('fs'), 'writeFileSync').mockImplementation(() => {})
+  const mockWrite = jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {})
   const instance = atomic({
     target: './tokens.css',
     mode: 'css',

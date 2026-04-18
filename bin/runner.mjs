@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { register } from 'tsx/esm'
+import { register } from 'tsx/esm/api'
 import { pathToFileURL } from 'url'
 import { existsSync } from 'fs'
 
