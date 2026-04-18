@@ -24,6 +24,7 @@ function build() {
   return new Promise((resolve, reject) => {
     const child = spawn(process.execPath, [runnerPath, configPath], { stdio: 'inherit' })
     child.on('close', code => (code === 0 ? resolve() : reject(new Error(`Build exited with code ${code}`))))
+    child.on('error', reject)
   })
 }
 
@@ -33,7 +34,10 @@ if (command === 'build') {
     process.exit(1)
   })
 } else if (command === 'dev') {
-  await build().catch(console.error)
+  await build().catch(err => {
+    console.error(err.message)
+    console.log('Atomic: watching despite initial failure — fix the config to rebuild')
+  })
 
   const { watch } = await import('chokidar')
   watch(configPath, { ignoreInitial: true }).on('change', () => {
