@@ -130,12 +130,33 @@ export default base.extend(({ get }) => ({
 | `src/utils/formatTokens/formatTokens.ts` | Merge duplicate css/scss branches |
 | `src/atomic.ts` | Add `.extend()` and `.write()` to returned object |
 | `src/types.ts` | Add `.extend()` and `.write()` to `Atomic` interface |
+| `src/utils/colorScale/colorScale.ts` | New utility: `colorScale(base, factory)` helper |
 | `bin/index.js` + `bin/build.js` | Replace with `bin/cli.ts` |
 | `package.json` | Remove `nodemon`, `ts-node`, `commander`, `glob`; add `chokidar`; add `tsx` as peer dependency |
 
 ---
 
-## 4. What Does Not Change
+## 4. New `colorScale` Utility
+
+A pure helper for generating color palettes from a base color. No changes to the core config processor.
+
+```ts
+import { atomic, colorScale } from '@ftdigital/atomic'
+
+colors: {
+  primary: colorScale('#FA755A', (base) => ({
+    50: tint(0.95, base),
+    500: base,
+    950: shade(0.8, base),
+  }))
+}
+```
+
+Returns `{ default: base, ...factory(base) }`.
+
+---
+
+## 5. What Does Not Change
 
 - Public `atomic(config)` API — existing configs continue to work
 - `addVariant()` method
