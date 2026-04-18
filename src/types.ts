@@ -81,8 +81,14 @@ export interface TokenSet {
 }
 
 export interface Atomic<TConfig extends TokensConfig> {
-  config: AtomicConfig<TConfig>;
-  format: () => string;
-  get: (path: TokenPath<ResolvedTokensConfig<TConfig>>) => string;
-  addVariant: (name: string, config: VariantConfig<TConfig>) => Atomic<TConfig>;
+  config: AtomicConfig<TConfig>
+  format: () => string
+  get: (path: TokenPath<ResolvedTokensConfig<TConfig>>) => string
+  write: () => void
+  addVariant: (name: string, config: VariantConfig<TConfig>) => Atomic<TConfig>
+  extend: <TExtra extends TokensConfig>(
+    factory:
+      | TExtra
+      | ((utils: { get: (path: TokenPath<ResolvedTokensConfig<TConfig>>) => string }) => TExtra)
+  ) => Atomic<TConfig & TExtra>
 }

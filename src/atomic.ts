@@ -71,5 +71,5 @@ export function atomic<TConfig extends TokensConfig>(
     },
   }
 
-  return instance as unknown as Atomic<TConfig>
+  return instance
 }
