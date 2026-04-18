@@ -11,8 +11,8 @@
     "url": "https://github.com/ftdigital/atomic/issues"
   },
   "license": "MIT",
-  "main": "./dist/atomic.umd.js",
-  "module": "./dist/atomic.es.js",
+  "main": "./dist/atomic.umd.cjs",
+  "module": "./dist/atomic.es.mjs",
   "types": "./dist/index.d.ts",
   "sideEffects": false,
   "private": false,
@@ -23,9 +23,9 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/atomic.es.js",
+      "import": "./dist/atomic.es.mjs",
       "types": "./dist/index.d.ts",
-      "require": "./dist/atomic.umd.js"
+      "require": "./dist/atomic.umd.cjs"
     }
   },
   "scripts": {
@@ -38,11 +38,11 @@
   },
   "size-limit": [
     {
-      "path": "dist/atomic.es.js",
+      "path": "dist/atomic.es.mjs",
       "limit": "10 KB"
     },
     {
-      "path": "dist/atomic.umd.js",
+      "path": "dist/atomic.umd.cjs",
       "limit": "10 KB"
     }
   ],

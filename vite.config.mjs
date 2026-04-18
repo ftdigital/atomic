@@ -8,7 +8,7 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),
       name: "atomic",
-      fileName: (format) => `atomic.${format}.js`,
+      fileName: (format) => format === 'es' ? 'atomic.es.mjs' : 'atomic.umd.cjs',
     },
     rollupOptions: {
       external: ['fs'],
