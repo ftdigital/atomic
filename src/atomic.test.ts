@@ -165,3 +165,59 @@ it("Should return the correct value", () => {
 
   expect("tokens").toStrictEqual("tokens");
 });
+
+it('extend() with a plain object merges tokens', () => {
+  const base = atomic({
+    target: '/dev/null',
+    mode: 'css',
+    tokens: { colors: { primary: '#fff' } },
+  })
+  const extended = base.extend({ spacing: { sm: '8px' } })
+  expect(extended.config.tokens).toMatchObject({
+    colors: { primary: '#fff' },
+    spacing: { sm: '8px' },
+  })
+})
+
+it('extend() with a factory receives get and merges result', () => {
+  const base = atomic({
+    target: '/dev/null',
+    mode: 'css',
+    tokens: { colors: { primary: '#fff' } },
+  })
+  const extended = base.extend(({ get }) => ({
+    spacing: { sm: get('colors.primary') },
+  }))
+  expect(extended.config.tokens).toMatchObject({
+    colors: { primary: '#fff' },
+    spacing: { sm: 'var(--colors-primary)' },
+  })
+})
+
+it('extend() deep merges nested tokens', () => {
+  const base = atomic({
+    target: '/dev/null',
+    mode: 'css',
+    tokens: { colors: { primary: '#fff', secondary: '#000' } },
+  })
+  const extended = base.extend({ colors: { primary: '#123' } })
+  expect(extended.config.tokens).toMatchObject({
+    colors: { primary: '#123', secondary: '#000' },
+  })
+})
+
+it('write() writes formatted output to config.target', () => {
+  const mockWrite = jest.spyOn(require('fs'), 'writeFileSync').mockImplementation(() => {})
+  const instance = atomic({
+    target: './tokens.css',
+    mode: 'css',
+    tokens: { colors: { primary: '#fff' } },
+  })
+  instance.write()
+  expect(mockWrite).toHaveBeenCalledWith(
+    './tokens.css',
+    expect.stringContaining('--colors-primary'),
+    'utf8'
+  )
+  mockWrite.mockRestore()
+})
