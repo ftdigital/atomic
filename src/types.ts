@@ -33,28 +33,12 @@ interface TokensObject {
 }
 
 export type TokensConfig = {
-  [K in keyof TokensObject]?: WithTokenUtils<TokensObject[K]>;
+  [K in keyof TokensObject]?: TokensObject[K];
 };
 
-export interface TokenUtils {
-  get: (path: string) => string;
-}
-
-type WithTokenUtils<T> =
-  | T
-  | ((utils: TokenUtils) => T)
-  | { [K in keyof T]: WithTokenUtils<T[K]> };
-
-type InferResolvableTo<T> = T extends {
-  default: infer A;
-}
-  ? A
-  : T extends (utils: any) => infer A
-    ? A
-    : { [K in keyof T]: InferResolvableTo<T[K]> };
-
-export type ResolvedTokensConfig<TConfig extends TokensConfig> =
-  InferResolvableTo<TConfig>;
+export type ResolvedTokensConfig<TConfig extends TokensConfig> = {
+  [K in keyof TConfig]: TConfig[K] extends { default: infer A } ? A : TConfig[K];
+};
 
 export type AtomicMode = "css" | "scss" | "sass";
 

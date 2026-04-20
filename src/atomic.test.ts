@@ -13,13 +13,13 @@ function generateTokens() {
         xl: 1280,
         "2xl": 1540,
       },
-      mediaQueries: ({ get }) => ({
-        sm: `"min-width: #{${get("screens.sm")}}px"`,
-        md: `"min-width: #{${get("screens.md")}}px"`,
-        lg: `"min-width: #{${get("screens.lg")}}px"`,
-        xl: `"min-width: #{${get("screens.xl")}}px"`,
-        "2xl": `"min-width: #{${get("screens.2xl")}}px"`,
-      }),
+      mediaQueries: {
+        sm: '"min-width: 640px"',
+        md: '"min-width: 768px"',
+        lg: '"min-width: 1024px"',
+        xl: '"min-width: 1280px"',
+        "2xl": '"min-width: 1540px"',
+      },
       // spacing: {
       //   px: '1px',
       //   0: '0px',
@@ -101,16 +101,16 @@ function generateTokens() {
         },
         ui: {
           border: {
-            default: ({ get }) => get("colors.neutrals.300"),
-            dark: ({ get }) => get("colors.neutrals.400"),
+            default: "var(--colors-neutrals-300)",
+            dark: "var(--colors-neutrals-400)",
           },
           link: {
-            default: ({ get }) => get("colors.secondary.blue"),
-            hover: ({ get }) => get("colors.secondary.blue.darken"),
+            default: "var(--colors-secondary-blue)",
+            hover: "var(--colors-secondary-blue-darken)",
           },
           button: {
-            default: ({ get }) => get("colors.secondary.blue"),
-            hover: ({ get }) => get("colors.secondary.blue.darken"),
+            default: "var(--colors-secondary-blue)",
+            hover: "var(--colors-secondary-blue-darken)",
           },
         },
       },

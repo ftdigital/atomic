@@ -1,12 +1,11 @@
-import type { TokenUtils, TokensConfig } from '@types'
+import type { TokensConfig } from '@types'
 
 function isValue(value: unknown): value is string | number {
   return typeof value === 'string' || typeof value === 'number'
 }
 
 export function flattenTokens(
-  config: TokensConfig | Record<string, unknown>,
-  utils: TokenUtils
+  config: TokensConfig | Record<string, unknown>
 ): Map<string, string | number> {
   const map = new Map<string, string | number>()
 
@@ -15,12 +14,11 @@ export function flattenTokens(
       const resolvedPath = key === 'default' ? path : [...path, key]
       const stringPath = resolvedPath.join('.')
       const value = obj[key]
-      const resolved = typeof value === 'function' ? value(utils) : value
 
-      if (isValue(resolved)) {
-        map.set(stringPath, resolved)
-      } else if (resolved !== null && typeof resolved === 'object') {
-        loop(resolved as Record<string, unknown>, resolvedPath)
+      if (isValue(value)) {
+        map.set(stringPath, value)
+      } else if (value !== null && typeof value === 'object') {
+        loop(value as Record<string, unknown>, resolvedPath)
       }
     }
   }

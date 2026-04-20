@@ -1,5 +1,5 @@
 import { writeFileSync } from 'fs'
-import { Atomic, AtomicConfig, TokenSet, TokenUtils, TokensConfig, VariantConfig } from '@types'
+import { Atomic, AtomicConfig, TokenSet, TokensConfig, VariantConfig } from '@types'
 import { flattenTokens, formatTokens, formatTokenVar } from '@utils'
 
 function deepMerge(
@@ -26,18 +26,14 @@ function deepMerge(
 export function atomic<TConfig extends TokensConfig>(
   config: AtomicConfig<TConfig>
 ): Atomic<TConfig> {
-  const utils: TokenUtils = {
-    get: (path) => formatTokenVar(path, config.mode).var,
-  }
-
   const defaultSet: TokenSet = {
-    entries: flattenTokens(config.tokens, utils),
+    entries: flattenTokens(config.tokens),
     meta: {},
   }
 
   const variantSets: TokenSet[] = Object.entries(config.variants ?? {}).map(
     ([, { tokens, selector, description }]) => ({
-      entries: flattenTokens(tokens as any, utils),
+      entries: flattenTokens(tokens as any),
       meta: { selector, description },
     })
   )
