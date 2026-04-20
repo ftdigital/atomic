@@ -47,9 +47,12 @@ export interface VariantConfig<TConfig extends TokensConfig> {
   description?: string;
   tokens: DeepPartial<TConfig>;
 }
-export interface AtomicConfig<TConfig extends TokensConfig> {
+export interface AtomicConfig<
+  TConfig extends TokensConfig,
+  TVariants extends Record<string, VariantConfig<TConfig>> = Record<string, VariantConfig<TConfig>>
+> {
   tokens: TConfig;
-  variants?: Record<string, VariantConfig<TConfig>>;
+  variants?: TVariants;
   mode: AtomicMode;
   target: string;
 }
@@ -64,15 +67,18 @@ export interface TokenSet {
   meta: AtomicTokensMeta;
 }
 
-export interface Atomic<TConfig extends TokensConfig> {
-  config: AtomicConfig<TConfig>
+export interface Atomic<
+  TConfig extends TokensConfig,
+  TVariants extends Record<string, VariantConfig<TConfig>> = Record<string, VariantConfig<TConfig>>
+> {
+  config: AtomicConfig<TConfig, TVariants>
   format: () => string
-  get: (path: TokenPath<ResolvedTokensConfig<TConfig>>) => string
+  ref: (path: TokenPath<ResolvedTokensConfig<TConfig>>) => string
+  value: (path: TokenPath<ResolvedTokensConfig<TConfig>>, variant?: keyof TVariants) => string | number | undefined
   write: () => void
-  addVariant: (name: string, config: VariantConfig<TConfig>) => Atomic<TConfig>
   extend: <TExtra extends TokensConfig>(
     factory:
       | TExtra
-      | ((utils: { get: (path: TokenPath<ResolvedTokensConfig<TConfig>>) => string }) => TExtra)
+      | ((utils: { ref: (path: TokenPath<ResolvedTokensConfig<TConfig>>) => string }) => TExtra)
   ) => Atomic<TConfig & TExtra>
 }

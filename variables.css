@@ -7,11 +7,11 @@
 --screens-2xl: 1540;
 
 /* mediaQueries variables */
---mediaQueries-sm: "min-width: #{var(--screens-sm)}px";
---mediaQueries-md: "min-width: #{var(--screens-md)}px";
---mediaQueries-lg: "min-width: #{var(--screens-lg)}px";
---mediaQueries-xl: "min-width: #{var(--screens-xl)}px";
---mediaQueries-2xl: "min-width: #{var(--screens-2xl)}px";
+--mediaQueries-sm: "min-width: 640px";
+--mediaQueries-md: "min-width: 768px";
+--mediaQueries-lg: "min-width: 1024px";
+--mediaQueries-xl: "min-width: 1280px";
+--mediaQueries-2xl: "min-width: 1540px";
 
 /* colors variables */
 --colors-primary-green: #414B0E;
@@ -78,9 +78,4 @@
 --boxShadow-md: 0 0 32px 0px rgba(0, 0, 0, 0.1);;
 --boxShadow-lg: 0 4px 48px rgba(0, 0, 0, 0.05);
 
-.dark-mode {
-/* colors variables */
---colors-neutrals-100: red;
-
-}
 }

@@ -151,18 +151,9 @@ function generateTokens() {
 }
 
 it("Should return the correct value", () => {
-  let atomic = generateTokens();
-
-  atomic = atomic.addVariant("dark", {
-    selector: ".dark-mode",
-    tokens: {
-      colors: { neutrals: { "100": "red" } },
-    },
-  });
-
+  const atomic = generateTokens();
   const fileContents = atomic.format();
   fs.writeFileSync(atomic.config.target, fileContents, "utf8");
-
   expect("tokens").toStrictEqual("tokens");
 });
 
@@ -185,8 +176,8 @@ it('extend() with a factory receives get and merges result', () => {
     mode: 'css',
     tokens: { colors: { primary: '#fff' } },
   })
-  const extended = base.extend(({ get }) => ({
-    spacing: { sm: get('colors.primary') },
+  const extended = base.extend(({ ref }) => ({
+    spacing: { sm: ref('colors.primary') },
   }))
   expect(extended.config.tokens).toMatchObject({
     colors: { primary: '#fff' },

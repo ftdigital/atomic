@@ -23,39 +23,37 @@ function deepMerge(
   return result
 }
 
-export function atomic<TConfig extends TokensConfig>(
-  config: AtomicConfig<TConfig>
-): Atomic<TConfig> {
+export function atomic<
+  TConfig extends TokensConfig,
+  TVariants extends Record<string, VariantConfig<TConfig>> = Record<string, VariantConfig<TConfig>>
+>(config: AtomicConfig<TConfig, TVariants>): Atomic<TConfig, TVariants> {
   const defaultSet: TokenSet = {
     entries: flattenTokens(config.tokens),
     meta: {},
   }
 
-  const variantSets: TokenSet[] = Object.entries(config.variants ?? {}).map(
-    ([, { tokens, selector, description }]) => ({
-      entries: flattenTokens(tokens as any),
-      meta: { selector, description },
-    })
+  const variantMap = new Map(
+    Object.entries(config.variants ?? {}).map(([name, { tokens, selector, description }]) => [
+      name,
+      { entries: flattenTokens(tokens as any), meta: { selector, description } } satisfies TokenSet,
+    ])
   )
 
-  const tokenSets = [defaultSet, ...variantSets]
+  const tokenSets = [defaultSet, ...variantMap.values()]
 
   const instance = {
     config,
     format: () => formatTokens(tokenSets, config.mode),
-    get: (path: string) => formatTokenVar(path, config.mode).var,
+    ref: (path: string) => formatTokenVar(path, config.mode).var,
+    value: (path: string, variant?: keyof TVariants) =>
+      variant ? variantMap.get(variant as string)?.entries.get(path) ?? defaultSet.entries.get(path) : defaultSet.entries.get(path),
     write: () => writeFileSync(config.target, formatTokens(tokenSets, config.mode), 'utf8'),
-    addVariant: (name: string, variantConfig: VariantConfig<TConfig>) =>
-      atomic<TConfig>({
-        ...config,
-        variants: { ...config.variants, [name]: variantConfig },
-      }),
     extend: <TExtra extends TokensConfig>(
-      factory: TExtra | ((utils: { get: (path: string) => string }) => TExtra)
+      factory: TExtra | ((utils: { ref: (path: string) => string }) => TExtra)
     ): Atomic<TConfig & TExtra> => {
       const extra =
         typeof factory === 'function'
-          ? factory({ get: (path) => formatTokenVar(path, config.mode).var })
+          ? factory({ ref: (path) => formatTokenVar(path, config.mode).var })
           : factory
       return atomic<TConfig & TExtra>({
         ...(config as any),
