@@ -11,7 +11,7 @@ export type TypeFromPath<
       : never;
 }[Path];
 
-type Dot<T extends string, U extends string> = "" extends U ? T : `${T}.${U}`;
+type Dot<T extends string, U extends string> = U extends "" ? T : `${T}.${U}`;
 
 type StringKey<K> = K extends string ? K : K extends number ? `${K}` : never;
 
