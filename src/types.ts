@@ -1,8 +1,8 @@
 import { DeepPartial, DottedPath } from "./types.utils";
 
-type TokenPath<T extends Record<string, unknown>> = DottedPath<
-  T,
-  string | number
+type TokenPath<T extends Record<string, unknown>> = Extract<
+  DottedPath<T, string | number>,
+  string
 >;
 
 type KeyValuePair<Value extends string | number> = Record<string, Value>;
@@ -36,9 +36,6 @@ export type TokensConfig = {
   [K in keyof TokensObject]?: TokensObject[K];
 };
 
-export type ResolvedTokensConfig<TConfig extends TokensConfig> = {
-  [K in keyof TConfig]: TConfig[K] extends { default: infer A } ? A : TConfig[K];
-};
 
 export type AtomicMode = "css" | "scss" | "sass";
 
@@ -73,12 +70,12 @@ export interface Atomic<
 > {
   config: AtomicConfig<TConfig, TVariants>
   format: () => string
-  ref: (path: TokenPath<ResolvedTokensConfig<TConfig>>) => string
-  value: (path: TokenPath<ResolvedTokensConfig<TConfig>>, variant?: keyof TVariants) => string | number | undefined
+  ref: (path: TokenPath<TConfig>) => string
+  value: (path: TokenPath<TConfig>, variant?: keyof TVariants) => string | number | undefined
   write: () => void
   extend: <TExtra extends TokensConfig>(
     factory:
       | TExtra
-      | ((utils: { ref: (path: TokenPath<ResolvedTokensConfig<TConfig>>) => string }) => TExtra)
+      | ((utils: { ref: (path: TokenPath<TConfig>) => string }) => TExtra)
   ) => Atomic<TConfig & TExtra>
 }
