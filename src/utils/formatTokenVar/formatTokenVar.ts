@@ -1,6 +1,6 @@
-import { AtomicMode } from "@types";
+import { AtomicVarType } from "@types";
 
-export function formatTokenVar(path: string, mode: AtomicMode) {
+export function formatTokenVar(path: string, mode: AtomicVarType) {
   const formattedPath = path.split(".").join("-");
 
   switch (mode) {

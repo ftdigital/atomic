@@ -1,4 +1,4 @@
-import type { AtomicMode, TokenSet } from '@types'
+import type { AtomicVarType, TokenSet } from '@types'
 import { formatTokenVar } from '../formatTokenVar'
 import { groupTokens } from '../groupTokens'
 
@@ -10,7 +10,7 @@ function cssRule(key: string, value: string | number) {
   return rule(`${key}: ${value};`)
 }
 
-function comment(content: string, mode: AtomicMode) {
+function comment(content: string, mode: AtomicVarType) {
   return mode === 'css' ? rule(`/* ${content} */`) : rule(`// ${content}`)
 }
 
@@ -18,7 +18,7 @@ function wrapInSelector(selector: string, content: string) {
   return [rule(`${selector} {`), content, rule('}')].join('')
 }
 
-function formatTokenSet(tokenSet: TokenSet, mode: AtomicMode) {
+function formatTokenSet(tokenSet: TokenSet, mode: AtomicVarType) {
   const grouped = groupTokens(Array.from(tokenSet.entries))
 
   const contents = Array.from(grouped)
@@ -37,7 +37,7 @@ function formatTokenSet(tokenSet: TokenSet, mode: AtomicMode) {
     : contents
 }
 
-export function formatTokens(tokenSets: TokenSet[], mode: AtomicMode) {
+export function formatTokens(tokenSets: TokenSet[], mode: AtomicVarType) {
   const contents = tokenSets.map(set => formatTokenSet(set, mode)).join('')
   return mode === 'css' ? wrapInSelector(':root', contents) : contents
 }

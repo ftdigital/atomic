@@ -41,22 +41,32 @@ export function atomic<
 
   const tokenSets = [defaultSet, ...variantMap.values()]
 
+  function resolveVarType() {
+    if (!config.varType) throw new Error('varType is required for this operation')
+    return config.varType
+  }
+
   const instance = {
     config,
-    format: () => formatTokens(tokenSets, config.mode),
-    ref: (path: string) => formatTokenVar(path, config.mode).var,
+    format: () => formatTokens(tokenSets, resolveVarType()),
+    ref: (path: string) => formatTokenVar(path, resolveVarType()).var,
     value: (path: string, variant?: keyof TVariants) =>
       variant ? variantMap.get(variant as string)?.entries.get(path) ?? defaultSet.entries.get(path) : defaultSet.entries.get(path),
-    write: () => writeFileSync(config.target, formatTokens(tokenSets, config.mode), 'utf8'),
+    write: () => {
+      if (!config.filePath) throw new Error('filePath is required to write tokens')
+      writeFileSync(config.filePath, formatTokens(tokenSets, resolveVarType()), 'utf8')
+    },
     extend: <TExtra extends TokensConfig>(
-      factory: TExtra | ((utils: { ref: (path: string) => string }) => TExtra)
+      factory: TExtra | ((utils: { ref: (path: string) => string }) => TExtra),
+      overrides?: { varType?: typeof config.varType; filePath?: string }
     ): Atomic<TConfig & TExtra> => {
       const extra =
         typeof factory === 'function'
-          ? factory({ ref: (path) => formatTokenVar(path, config.mode).var })
+          ? factory({ ref: (path) => formatTokenVar(path, resolveVarType()).var })
           : factory
       return atomic<TConfig & TExtra>({
         ...(config as any),
+        ...overrides,
         tokens: deepMerge(
           config.tokens as Record<string, unknown>,
           extra as Record<string, unknown>

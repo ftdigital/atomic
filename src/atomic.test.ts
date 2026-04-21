@@ -3,8 +3,8 @@ import { atomic } from "./atomic";
 
 function generateTokens() {
   return atomic({
-    target: "./variables.css",
-    mode: "css",
+    filePath: "./variables.css",
+    varType: "css",
     tokens: {
       screens: {
         sm: 640,
@@ -153,14 +153,14 @@ function generateTokens() {
 it("Should return the correct value", () => {
   const atomic = generateTokens();
   const fileContents = atomic.format();
-  fs.writeFileSync(atomic.config.target, fileContents, "utf8");
+  fs.writeFileSync(atomic.config.filePath!, fileContents, "utf8");
   expect("tokens").toStrictEqual("tokens");
 });
 
 it('extend() with a plain object merges tokens', () => {
   const base = atomic({
-    target: '/dev/null',
-    mode: 'css',
+    filePath: '/dev/null',
+    varType: 'css',
     tokens: { colors: { primary: '#fff' } },
   })
   const extended = base.extend({ spacing: { sm: '8px' } })
@@ -172,8 +172,8 @@ it('extend() with a plain object merges tokens', () => {
 
 it('extend() with a factory receives get and merges result', () => {
   const base = atomic({
-    target: '/dev/null',
-    mode: 'css',
+    filePath: '/dev/null',
+    varType: 'css',
     tokens: { colors: { primary: '#fff' } },
   })
   const extended = base.extend(({ ref }) => ({
@@ -187,8 +187,8 @@ it('extend() with a factory receives get and merges result', () => {
 
 it('extend() deep merges nested tokens', () => {
   const base = atomic({
-    target: '/dev/null',
-    mode: 'css',
+    filePath: '/dev/null',
+    varType: 'css',
     tokens: { colors: { primary: '#fff', secondary: '#000' } },
   })
   const extended = base.extend({ colors: { primary: '#123' } })
@@ -197,11 +197,11 @@ it('extend() deep merges nested tokens', () => {
   })
 })
 
-it('write() writes formatted output to config.target', () => {
+it('write() writes formatted output to config.filePath', () => {
   const mockWrite = jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {})
   const instance = atomic({
-    target: './tokens.css',
-    mode: 'css',
+    filePath: './tokens.css',
+    varType: 'css',
     tokens: { colors: { primary: '#fff' } },
   })
   instance.write()

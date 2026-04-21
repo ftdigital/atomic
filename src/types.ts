@@ -37,7 +37,7 @@ export type TokensConfig = {
 };
 
 
-export type AtomicMode = "css" | "scss" | "sass";
+export type AtomicVarType = "css" | "scss" | "sass";
 
 export interface VariantConfig<TConfig extends TokensConfig> {
   selector: string;
@@ -50,8 +50,8 @@ export interface AtomicConfig<
 > {
   tokens: TConfig;
   variants?: TVariants;
-  mode: AtomicMode;
-  target: string;
+  varType?: AtomicVarType;
+  filePath?: string;
 }
 
 export interface AtomicTokensMeta {
@@ -76,6 +76,7 @@ export interface Atomic<
   extend: <TExtra extends TokensConfig>(
     factory:
       | TExtra
-      | ((utils: { ref: (path: TokenPath<TConfig>) => string }) => TExtra)
+      | ((utils: { ref: (path: TokenPath<TConfig>) => string }) => TExtra),
+    overrides?: Pick<AtomicConfig<TConfig & TExtra>, 'varType' | 'filePath'>
   ) => Atomic<TConfig & TExtra>
 }
