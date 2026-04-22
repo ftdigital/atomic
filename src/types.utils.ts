@@ -15,13 +15,21 @@ type Dot<T extends string, U extends string> = U extends "" ? T : `${T}.${U}`;
 
 type StringKey<K> = K extends string ? K : K extends number ? `${K}` : never;
 
+type DottedPathMap<T, V> = {
+  [K in keyof T & (string | number) as StringKey<K>]: StringKey<K> extends "default"
+    ? DottedPath<T[K], V>
+    : Dot<StringKey<K>, Extract<DottedPath<T[K], V>, string>>;
+};
+
 export type DottedPath<T, V> = T extends V
   ? ""
-  : {
-      [K in keyof T as StringKey<K>]: StringKey<K> extends "default"
-        ? DottedPath<T[K], V>
-        : Dot<StringKey<K>, DottedPath<T[K], V>>;
-    }[StringKey<keyof T>];
+  : DottedPathMap<T, V>[keyof DottedPathMap<T, V>];
+
+export type ResolveDefault<T> = T extends Record<string, unknown>
+  ? "default" extends keyof T
+    ? T["default"]
+    : T
+  : T;
 
 export type DeepPartial<T> = {
   [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];

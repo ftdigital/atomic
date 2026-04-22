@@ -1,4 +1,4 @@
-import { DeepPartial, DottedPath, TypeFromPath } from "./types.utils";
+import { DeepPartial, DottedPath, ResolveDefault, TypeFromPath } from "./types.utils";
 
 type TokenValue = string | number;
 
@@ -58,7 +58,7 @@ export interface Atomic<
   value: <TPath extends TokenPath<TConfig>>(
     path: TPath,
     variant?: keyof TVariants,
-  ) => TypeFromPath<TConfig, TPath> | undefined;
+  ) => ResolveDefault<TypeFromPath<TConfig, TPath>> | undefined;
   write: () => void;
   extend: <TExtra extends TokensConfig>(
     factory:
