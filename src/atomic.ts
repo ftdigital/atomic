@@ -51,7 +51,7 @@ export function atomic<
     format: () => formatTokens(tokenSets, resolveVarType()),
     ref: (path: string) => formatTokenVar(path, resolveVarType()).var,
     value: (path: string, variant?: keyof TVariants) =>
-      variant ? variantMap.get(variant as string)?.entries.get(path) ?? defaultSet.entries.get(path) : defaultSet.entries.get(path),
+      (variant ? variantMap.get(variant as string)?.entries.get(path) ?? defaultSet.entries.get(path) : defaultSet.entries.get(path)) as any,
     write: () => {
       if (!config.filePath) throw new Error('filePath is required to write tokens')
       writeFileSync(config.filePath, formatTokens(tokenSets, resolveVarType()), 'utf8')
@@ -62,7 +62,7 @@ export function atomic<
     ): Atomic<TConfig & TExtra> => {
       const extra =
         typeof factory === 'function'
-          ? factory({ ref: (path) => formatTokenVar(path, resolveVarType()).var })
+          ? (factory as (utils: { ref: (path: string) => string }) => TExtra)({ ref: (path: string) => formatTokenVar(path, resolveVarType()).var })
           : factory
       return atomic<TConfig & TExtra>({
         ...(config as any),
